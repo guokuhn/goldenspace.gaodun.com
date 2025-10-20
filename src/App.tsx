@@ -9,6 +9,7 @@ import CoursesPage from './pages/CoursesPage';
 import LivesPage from './pages/LivesPage';
 import ScheduleSquarePage from './pages/ScheduleSquarePage';
 import CommunityPage from './pages/CommunityPage';
+import UserScheduleDetailPage from './pages/UserScheduleDetailPage';
 import LoginModal from './components/LoginModal';
 import { mockUser } from './data/mockData';
 import { User } from './types';
@@ -45,6 +46,7 @@ function App() {
         <Route path="/lives" element={<LivesPage />} />
         <Route path="/schedule-square" element={<ScheduleSquarePage />} />
         <Route path="/community" element={<CommunityPage />} />
+        <Route path="/user-schedule/:userId" element={<UserScheduleDetailPage />} />
       </Routes>
       
       {showLoginModal && (

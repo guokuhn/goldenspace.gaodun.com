@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Search, Filter, Trophy } from 'lucide-react';
+import { scheduleUserNames, userAvatars } from '../data/mockData';
 
 export default function ScheduleSquarePage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,12 +17,12 @@ export default function ScheduleSquarePage() {
   const schools = ['清华大学', '北京大学', '复旦大学', '浙江大学', '上海交通大学'];
   const majors = ['计算机', '经济学', '管理学', '法学', '医学', '工程'];
 
-  const userSchedules = Array.from({ length: 30 }, (_, i) => ({
+  const userSchedules = Array.from({ length: 20 }, (_, i) => ({
     id: `${i + 1}`,
-    name: `用户${i + 1}`,
+    name: scheduleUserNames[i],
     school: schools[i % schools.length],
     major: majors[i % majors.length],
-    avatar: ['👨‍🎓', '👩‍🎓', '🧑‍💻', '👨‍💼', '👩‍💼'][i % 5],
+    avatar: userAvatars[i % userAvatars.length],
     points: 2000 - i * 30,
     weekSchedules: 7 + (i % 3),
     goal: goals[i % goals.length],
@@ -32,8 +33,8 @@ export default function ScheduleSquarePage() {
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
       <div className="bg-white shadow-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-800">
-            <ArrowLeft size={20} />
+          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
+            <ArrowLeft size={20} className="hover:text-primary-500 transition-colors" />
             <span>返回首页</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-800">日程广场</h1>
@@ -47,7 +48,7 @@ export default function ScheduleSquarePage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div className="md:col-span-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary-400" size={20} />
                 <input
                   type="text"
                   value={searchTerm}
@@ -59,8 +60,8 @@ export default function ScheduleSquarePage() {
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 mb-3">
-            <Filter size={18} className="text-gray-600" />
+          <div className="flex items-center space-x-2 mb-3 group">
+            <Filter size={18} className="text-primary-500 group-hover:text-primary-600 transition-colors" />
             <span className="font-semibold text-gray-700">筛选条件</span>
           </div>
           
@@ -115,13 +116,18 @@ export default function ScheduleSquarePage() {
         {/* 日程卡片网格 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {userSchedules.map((user) => (
-            <div
+            <Link
               key={user.id}
-              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:-translate-y-2 transition-all cursor-pointer"
+              to={`/user-schedule/${user.id}`}
+              className="block bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:-translate-y-2 transition-all cursor-pointer"
             >
               <div className="bg-gradient-to-br from-accent-100 to-green-100 p-6">
                 <div className="flex items-start space-x-3">
-                  <div className="text-4xl">{user.avatar}</div>
+                  <img 
+                    src={user.avatar} 
+                    alt={user.name} 
+                    className="w-14 h-14 rounded-full object-cover border-2 border-white"
+                  />
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <div>
@@ -134,8 +140,8 @@ export default function ScheduleSquarePage() {
                       <span className="bg-primary-100 text-primary-700 text-xs px-2 py-1 rounded">
                         {user.goal}
                       </span>
-                      <div className="flex items-center space-x-1 bg-white rounded px-2 py-1">
-                        <Trophy size={14} className="text-primary-500" />
+                      <div className="flex items-center space-x-1 bg-white rounded px-2 py-1 group">
+                        <Trophy size={14} className="text-primary-500 group-hover:scale-110 transition-transform duration-300" />
                         <span className="text-sm font-semibold text-primary-700">{user.points}</span>
                       </div>
                     </div>
@@ -155,23 +161,17 @@ export default function ScheduleSquarePage() {
                   {Array.from({ length: 7 }).map((_, idx) => (
                     <div
                       key={idx}
-                      className={`flex-1 h-8 rounded flex items-center justify-center text-xs ${
-                        idx < user.weekSchedules - 2
-                          ? 'bg-accent-500 text-white'
-                          : idx < user.weekSchedules
-                          ? 'bg-gray-200 text-gray-600'
-                          : 'bg-gray-100 text-gray-400'
-                      }`}
+                      className={`flex-1 h-8 rounded flex items-center justify-center text-xs ${idx < user.weekSchedules - 2 ? 'bg-accent-500 text-white' : idx < user.weekSchedules ? 'bg-gray-200 text-gray-600' : 'bg-gray-100 text-gray-400'}`}
                     >
                       {idx < user.weekSchedules - 2 ? '✓' : '·'}
                     </div>
                   ))}
                 </div>
-                <button className="w-full mt-4 bg-gradient-to-r from-accent-500 to-green-600 text-white py-2 rounded-lg hover:shadow-lg transition-all">
+                <div className="w-full mt-4 bg-gradient-to-r from-accent-500 to-green-600 text-white py-2 rounded-lg hover:shadow-lg transition-all text-center">
                   查看详情
-                </button>
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

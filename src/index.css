@@ -4,7 +4,8 @@
 
 @layer base {
   body {
-    @apply bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50 min-h-screen;
+    @apply bg-tech-gradient min-h-screen font-sans text-gray-800;
+    background-attachment: fixed;
   }
 }
 
@@ -15,6 +16,26 @@
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+  
+  .tech-card {
+    @apply bg-card-gradient backdrop-blur-sm rounded-2xl shadow-lg border border-primary-100 transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+  }
+  
+  .tech-button {
+    @apply bg-button-gradient text-white font-medium rounded-lg shadow hover:shadow-md transform hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50;
+  }
+  
+  .tech-link {
+    @apply text-primary-500 hover:text-primary-600 transition-colors duration-300 flex items-center space-x-1;
+  }
+  
+  .glow-effect {
+    box-shadow: 0 0 15px rgba(255, 107, 26, 0.2);
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent;
   }
 }
 

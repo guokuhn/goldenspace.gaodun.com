@@ -23,13 +23,13 @@ export default function CommunityPage() {
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
       <div className="bg-white shadow-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-800">
-            <ArrowLeft size={20} />
+          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
+            <ArrowLeft size={20} className="hover:text-primary-500 transition-colors" />
             <span>返回首页</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-800">社区</h1>
-          <button className="flex items-center space-x-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all">
-            <Plus size={18} />
+          <button className="flex items-center space-x-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all group">
+            <Plus size={18} className="transform group-hover:rotate-45 transition-transform duration-300" />
             <span>发布</span>
           </button>
         </div>
@@ -41,7 +41,7 @@ export default function CommunityPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div className="md:col-span-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary-400" size={20} />
                 <input
                   type="text"
                   value={searchTerm}
@@ -53,9 +53,9 @@ export default function CommunityPage() {
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 mb-3">
-            <Filter size={18} className="text-gray-600" />
-            <span className="font-semibold text-gray-700">筛选条件</span>
+          <div className="flex items-center space-x-2 mb-3 group">
+            <Filter size={18} className="text-primary-500 group-hover:text-primary-600 transition-colors" />
+            <span className="font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">筛选条件</span>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -138,7 +138,11 @@ export default function CommunityPage() {
             >
               <div className="p-4">
                 <div className="flex items-start space-x-3 mb-3">
-                  <div className="text-3xl">{post.avatar}</div>
+                  <img 
+                    src={post.avatar} 
+                    alt={post.author} 
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
                   <div className="flex-1">
                     <p className="font-semibold text-gray-800">{post.author}</p>
                     <p className="text-xs text-gray-500">{post.publishTime}</p>
@@ -150,27 +154,27 @@ export default function CommunityPage() {
                 {post.images && (
                   <div className="grid grid-cols-2 gap-2 mb-3">
                     {post.images.map((img, idx) => (
-                      <div
+                      <img
                         key={idx}
-                        className="aspect-square bg-gradient-to-br from-primary-100 to-secondary-100 rounded-lg flex items-center justify-center text-5xl"
-                      >
-                        {img}
-                      </div>
+                        src={img}
+                        alt={`${post.author}的帖子图片`}
+                        className="aspect-square w-full h-full object-cover rounded-lg"
+                      />
                     ))}
                   </div>
                 )}
 
                 <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-                  <button className="flex items-center space-x-1 text-gray-600 hover:text-red-500 transition-colors">
-                    <Heart size={18} />
+                  <button className="flex items-center space-x-1 text-gray-600 hover:text-red-500 transition-colors group">
+                    <Heart size={18} className="transform group-hover:scale-110 transition-transform duration-300" />
                     <span className="text-sm">{post.likes}</span>
                   </button>
-                  <button className="flex items-center space-x-1 text-gray-600 hover:text-primary-500 transition-colors">
-                    <MessageCircle size={18} />
+                  <button className="flex items-center space-x-1 text-gray-600 hover:text-primary-500 transition-colors group">
+                    <MessageCircle size={18} className="transform group-hover:scale-110 transition-transform duration-300" />
                     <span className="text-sm">评论</span>
                   </button>
-                  <button className="flex items-center space-x-1 text-gray-600 hover:text-secondary-500 transition-colors">
-                    <Bookmark size={18} />
+                  <button className="flex items-center space-x-1 text-gray-600 hover:text-secondary-500 transition-colors group">
+                    <Bookmark size={18} className="transform group-hover:scale-110 transition-transform duration-300" />
                     <span className="text-sm">{post.favorites}</span>
                   </button>
                 </div>

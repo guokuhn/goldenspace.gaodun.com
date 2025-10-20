@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Trophy, Award } from 'lucide-react';
+import { ArrowLeft, Trophy } from 'lucide-react';
 import { mockRankings } from '../data/mockData';
 
 export default function RankingDetailPage() {
@@ -20,8 +20,8 @@ export default function RankingDetailPage() {
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
       <div className="bg-white shadow-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-800">
-            <ArrowLeft size={20} />
+          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
+            <ArrowLeft size={20} className="hover:text-primary-500 transition-colors" />
             <span>返回首页</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-800">排行榜</h1>
@@ -90,10 +90,14 @@ export default function RankingDetailPage() {
                 <div className={`text-6xl mb-2 ${index === 0 ? 'animate-bounce' : ''}`}>
                   {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
                 </div>
-                <div className="text-4xl mb-2">{user.avatar}</div>
+                <img 
+                  src={user.avatar} 
+                  alt={user.name} 
+                  className="w-16 h-16 rounded-full object-cover mx-auto mb-2"
+                />
                 <p className="font-bold text-gray-800 text-lg mb-1">{user.name}</p>
-                <div className="flex items-center justify-center space-x-1">
-                  <Trophy className="text-primary-600" size={20} />
+                <div className="flex items-center justify-center space-x-1 group">
+                  <Trophy className="text-primary-600 group-hover:scale-110 transition-transform duration-300" size={20} />
                   <span className="text-2xl font-bold text-primary-600">{user.points}</span>
                 </div>
               </div>
@@ -102,7 +106,7 @@ export default function RankingDetailPage() {
 
           {/* 其他排名 */}
           <div className="space-y-2">
-            {mockRankings.slice(3, 50).map((user, index) => (
+            {mockRankings.slice(3, 5).map((user) => (
               <div
                 key={user.rank}
                 className="flex items-center space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-colors"
@@ -110,13 +114,17 @@ export default function RankingDetailPage() {
                 <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full font-bold text-gray-700">
                   {user.rank}
                 </div>
-                <div className="text-3xl">{user.avatar}</div>
+                <img 
+                  src={user.avatar} 
+                  alt={user.name} 
+                  className="w-10 h-10 rounded-full object-cover"
+                />
                 <div className="flex-1">
                   <p className="font-semibold text-gray-800">{user.name}</p>
                 </div>
                 <div className="text-right">
-                  <div className="flex items-center space-x-1">
-                    <Trophy className="text-primary-500" size={18} />
+                  <div className="flex items-center space-x-1 group">
+                    <Trophy className="text-primary-500 group-hover:scale-110 transition-transform duration-300" size={18} />
                     <span className="text-xl font-bold text-primary-600">{user.points}</span>
                   </div>
                   <p className="text-xs text-gray-500">积分</p>

@@ -7,8 +7,8 @@ export default function ReferralActivityPage() {
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
       <div className="bg-white shadow-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-800">
-            <ArrowLeft size={20} />
+          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
+            <ArrowLeft size={20} className="hover:text-primary-500 transition-colors" />
             <span>返回首页</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-800">圈人奖励</h1>
@@ -44,8 +44,8 @@ export default function ReferralActivityPage() {
           </div>
 
           <button className="bg-gradient-to-r from-accent-500 to-green-600 text-white px-12 py-4 rounded-xl text-lg font-bold hover:shadow-xl transform hover:-translate-y-1 transition-all">
-            <div className="flex items-center space-x-3">
-              <Share2 size={24} />
+            <div className="flex items-center space-x-3 group">
+              <Share2 size={24} className="group-hover:rotate-45 transition-transform duration-300" />
               <span>立即邀请好友</span>
             </div>
           </button>
@@ -54,17 +54,17 @@ export default function ReferralActivityPage() {
         {/* 我的邀请统计 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-lg p-6 text-center">
-            <Users className="mx-auto text-accent-500 mb-3" size={40} />
+            <Users className="mx-auto text-accent-500 mb-3 group-hover:scale-110 transition-transform duration-300" size={40} />
             <p className="text-4xl font-bold text-gray-800 mb-2">12</p>
             <p className="text-gray-600">累计邀请人数</p>
           </div>
           <div className="bg-white rounded-xl shadow-lg p-6 text-center">
-            <Gift className="mx-auto text-primary-500 mb-3" size={40} />
+            <Gift className="mx-auto text-primary-500 mb-3 group-hover:scale-110 transition-transform duration-300" size={40} />
             <p className="text-4xl font-bold text-gray-800 mb-2">600</p>
             <p className="text-gray-600">累计获得积分</p>
           </div>
           <div className="bg-white rounded-xl shadow-lg p-6 text-center">
-            <Trophy className="mx-auto text-secondary-500 mb-3" size={40} />
+            <Trophy className="mx-auto text-secondary-500 mb-3 group-hover:scale-110 transition-transform duration-300" size={40} />
             <p className="text-4xl font-bold text-gray-800 mb-2">15</p>
             <p className="text-gray-600">全国排名</p>
           </div>
@@ -72,8 +72,8 @@ export default function ReferralActivityPage() {
 
         {/* 圈人排行榜 */}
         <div className="bg-white rounded-2xl shadow-lg p-6">
-          <div className="flex items-center space-x-2 mb-6">
-            <Users className="text-accent-500" size={24} />
+          <div className="flex items-center space-x-2 mb-6 group">
+            <Users className="text-accent-500 group-hover:text-accent-600 transition-colors" size={24} />
             <h2 className="text-2xl font-bold text-gray-800">圈人排行榜</h2>
           </div>
 
@@ -100,7 +100,11 @@ export default function ReferralActivityPage() {
                     }`}>
                       {user.rank}
                     </div>
-                    <div className="text-2xl">{user.avatar}</div>
+                    <img 
+                      src={user.avatar} 
+                      alt={user.name} 
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
                     <div className="flex-1">
                       <p className="font-medium text-gray-800">{user.name}</p>
                     </div>
@@ -120,22 +124,19 @@ export default function ReferralActivityPage() {
                 <span>本校排行</span>
               </h3>
               <div className="space-y-2">
-                {mockRankings.slice(0, 10).map((user, index) => (
+                {mockRankings.slice(10, 20).map((user, index) => (
                   <div
                     key={user.rank}
-                    className={`flex items-center space-x-3 p-3 rounded-lg ${
-                      index < 3 ? 'bg-gradient-to-r from-accent-50 to-green-50' : 'hover:bg-gray-50'
-                    } transition-colors`}
+                    className={`flex items-center space-x-3 p-3 rounded-lg ${index < 3 ? 'bg-gradient-to-r from-accent-50 to-green-50' : 'hover:bg-gray-50'} transition-colors`}
                   >
-                    <div className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${
-                      index === 0 ? 'bg-yellow-400 text-white' :
-                      index === 1 ? 'bg-gray-300 text-white' :
-                      index === 2 ? 'bg-orange-400 text-white' :
-                      'bg-gray-100 text-gray-600'
-                    }`}>
-                      {user.rank}
+                    <div className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${index === 0 ? 'bg-yellow-400 text-white' : index === 1 ? 'bg-gray-300 text-white' : index === 2 ? 'bg-orange-400 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                      {index + 1}
                     </div>
-                    <div className="text-2xl">{user.avatar}</div>
+                    <img 
+                      src={user.avatar} 
+                      alt={user.name} 
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
                     <div className="flex-1">
                       <p className="font-medium text-gray-800">{user.name}</p>
                     </div>

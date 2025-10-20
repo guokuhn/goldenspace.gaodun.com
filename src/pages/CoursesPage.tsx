@@ -19,8 +19,8 @@ export default function CoursesPage() {
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
       <div className="bg-white shadow-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-800">
-            <ArrowLeft size={20} />
+          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
+            <ArrowLeft size={20} className="hover:text-primary-500 transition-colors" />
             <span>返回首页</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-800">公益课程</h1>
@@ -34,7 +34,7 @@ export default function CoursesPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div className="md:col-span-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary-400" size={20} />
                 <input
                   type="text"
                   value={searchTerm}
@@ -46,9 +46,9 @@ export default function CoursesPage() {
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 mb-3">
-            <Filter size={18} className="text-gray-600" />
-            <span className="font-semibold text-gray-700">筛选条件</span>
+          <div className="flex items-center space-x-2 mb-3 group">
+            <Filter size={18} className="text-primary-500 group-hover:text-primary-600 transition-colors" />
+            <span className="font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">筛选条件</span>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -95,8 +95,12 @@ export default function CoursesPage() {
               key={course.id}
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:-translate-y-2 transition-all cursor-pointer"
             >
-              <div className="bg-gradient-to-br from-primary-100 to-secondary-100 p-8 text-center">
-                <div className="text-6xl">{course.cover}</div>
+              <div className="w-full aspect-video overflow-hidden">
+                <img 
+                  src={course.cover} 
+                  alt={course.title} 
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2 h-12">{course.title}</h3>

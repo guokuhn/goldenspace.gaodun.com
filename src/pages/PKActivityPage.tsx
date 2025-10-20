@@ -22,8 +22,8 @@ export default function PKActivityPage() {
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
       <div className="bg-white shadow-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-800">
-            <ArrowLeft size={20} />
+          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
+            <ArrowLeft size={20} className="hover:text-primary-500 transition-colors" />
             <span>返回首页</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-800">PK挑战赛</h1>
@@ -71,10 +71,10 @@ export default function PKActivityPage() {
                 onClick={startPK}
                 className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-12 py-4 rounded-xl text-lg font-bold hover:shadow-xl transform hover:-translate-y-1 transition-all"
               >
-                <div className="flex items-center space-x-3">
-                  <Swords size={24} />
-                  <span>开始天梯赛PK</span>
-                </div>
+                <div className="flex items-center space-x-3 group">
+                    <Swords size={24} className="transform group-hover:scale-110 transition-transform duration-300" />
+                    <span>开始天梯赛PK</span>
+                  </div>
               </button>
             </div>
           )}
@@ -132,33 +132,33 @@ export default function PKActivityPage() {
 
         {/* 我的战绩 */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-lg p-6 text-center">
-            <Swords className="mx-auto text-primary-500 mb-3" size={32} />
-            <p className="text-3xl font-bold text-gray-800 mb-2">25</p>
-            <p className="text-gray-600">总场次</p>
+            <div className="bg-white rounded-xl shadow-lg p-6 text-center group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <Swords className="mx-auto text-primary-500 mb-3 transform group-hover:scale-110 transition-transform duration-300" size={32} />
+              <p className="text-3xl font-bold text-gray-800 mb-2">25</p>
+              <p className="text-gray-600 group-hover:text-primary-600 transition-colors">总场次</p>
+            </div>
+            <div className="bg-white rounded-xl shadow-lg p-6 text-center group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <Trophy className="mx-auto text-accent-500 mb-3 transform group-hover:scale-110 transition-transform duration-300" size={32} />
+              <p className="text-3xl font-bold text-gray-800 mb-2">18</p>
+              <p className="text-gray-600 group-hover:text-accent-600 transition-colors">胜场</p>
+            </div>
+            <div className="bg-white rounded-xl shadow-lg p-6 text-center group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <Zap className="mx-auto text-secondary-500 mb-3 transform group-hover:scale-110 transition-transform duration-300" size={32} />
+              <p className="text-3xl font-bold text-gray-800 mb-2">72%</p>
+              <p className="text-gray-600 group-hover:text-secondary-600 transition-colors">胜率</p>
+            </div>
+            <div className="bg-white rounded-xl shadow-lg p-6 text-center group hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+              <Trophy className="mx-auto text-primary-500 mb-3 transform group-hover:scale-110 transition-transform duration-300" size={32} />
+              <p className="text-3xl font-bold text-gray-800 mb-2">90</p>
+              <p className="text-gray-600 group-hover:text-primary-600 transition-colors">获得积分</p>
+            </div>
           </div>
-          <div className="bg-white rounded-xl shadow-lg p-6 text-center">
-            <Trophy className="mx-auto text-accent-500 mb-3" size={32} />
-            <p className="text-3xl font-bold text-gray-800 mb-2">18</p>
-            <p className="text-gray-600">胜场</p>
-          </div>
-          <div className="bg-white rounded-xl shadow-lg p-6 text-center">
-            <Zap className="mx-auto text-secondary-500 mb-3" size={32} />
-            <p className="text-3xl font-bold text-gray-800 mb-2">72%</p>
-            <p className="text-gray-600">胜率</p>
-          </div>
-          <div className="bg-white rounded-xl shadow-lg p-6 text-center">
-            <Trophy className="mx-auto text-primary-500 mb-3" size={32} />
-            <p className="text-3xl font-bold text-gray-800 mb-2">90</p>
-            <p className="text-gray-600">获得积分</p>
-          </div>
-        </div>
 
         {/* PK排行榜 */}
         <div className="bg-white rounded-2xl shadow-lg p-6">
-          <div className="flex items-center space-x-2 mb-6">
-            <Swords className="text-primary-500" size={24} />
-            <h2 className="text-2xl font-bold text-gray-800">PK排行榜</h2>
+          <div className="flex items-center space-x-2 mb-6 group">
+            <Swords className="text-primary-500 group-hover:text-primary-600 transition-colors" size={24} />
+            <h2 className="text-2xl font-bold text-gray-800 group-hover:text-primary-600 transition-colors">PK排行榜</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -172,19 +172,16 @@ export default function PKActivityPage() {
                 {mockRankings.slice(0, 10).map((user, index) => (
                   <div
                     key={user.rank}
-                    className={`flex items-center space-x-3 p-3 rounded-lg ${
-                      index < 3 ? 'bg-gradient-to-r from-primary-50 to-secondary-50' : 'hover:bg-gray-50'
-                    } transition-colors`}
+                    className={`flex items-center space-x-3 p-3 rounded-lg ${index < 3 ? 'bg-gradient-to-r from-primary-50 to-secondary-50' : 'hover:bg-gray-50'} transition-colors`}
                   >
-                    <div className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${
-                      index === 0 ? 'bg-yellow-400 text-white' :
-                      index === 1 ? 'bg-gray-300 text-white' :
-                      index === 2 ? 'bg-orange-400 text-white' :
-                      'bg-gray-100 text-gray-600'
-                    }`}>
-                      {user.rank}
+                    <div className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${index === 0 ? 'bg-yellow-400 text-white' : index === 1 ? 'bg-gray-300 text-white' : index === 2 ? 'bg-orange-400 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                      {index + 1}
                     </div>
-                    <div className="text-2xl">{user.avatar}</div>
+                    <img 
+                      src={user.avatar} 
+                      alt={user.name} 
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
                     <div className="flex-1">
                       <p className="font-medium text-gray-800">{user.name}</p>
                       <p className="text-xs text-gray-500">胜率 {Math.floor(Math.random() * 30) + 60}%</p>
@@ -205,22 +202,19 @@ export default function PKActivityPage() {
                 <span>本校排行</span>
               </h3>
               <div className="space-y-2">
-                {mockRankings.slice(0, 10).map((user, index) => (
+                {mockRankings.slice(10, 20).map((user, index) => (
                   <div
                     key={user.rank}
-                    className={`flex items-center space-x-3 p-3 rounded-lg ${
-                      index < 3 ? 'bg-gradient-to-r from-primary-50 to-secondary-50' : 'hover:bg-gray-50'
-                    } transition-colors`}
+                    className={`flex items-center space-x-3 p-3 rounded-lg ${index < 3 ? 'bg-gradient-to-r from-primary-50 to-secondary-50' : 'hover:bg-gray-50'} transition-colors`}
                   >
-                    <div className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${
-                      index === 0 ? 'bg-yellow-400 text-white' :
-                      index === 1 ? 'bg-gray-300 text-white' :
-                      index === 2 ? 'bg-orange-400 text-white' :
-                      'bg-gray-100 text-gray-600'
-                    }`}>
-                      {user.rank}
+                    <div className={`w-8 h-8 flex items-center justify-center rounded-full font-bold ${index === 0 ? 'bg-yellow-400 text-white' : index === 1 ? 'bg-gray-300 text-white' : index === 2 ? 'bg-orange-400 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                      {index + 1}
                     </div>
-                    <div className="text-2xl">{user.avatar}</div>
+                    <img 
+                      src={user.avatar} 
+                      alt={user.name} 
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
                     <div className="flex-1">
                       <p className="font-medium text-gray-800">{user.name}</p>
                       <p className="text-xs text-gray-500">胜率 {Math.floor(Math.random() * 30) + 60}%</p>

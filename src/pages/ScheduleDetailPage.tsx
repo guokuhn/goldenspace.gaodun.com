@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, CheckCircle, Circle, Plus, Settings, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Calendar, CheckCircle, Circle, Plus, Settings, BarChart3 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { User } from '../types';
 import { mockSchedules, weeklyCheckInData, weeklyPointsData } from '../data/mockData';
@@ -34,16 +34,16 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
       <div className="bg-white shadow-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-800">
-            <ArrowLeft size={20} />
+          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
+            <ArrowLeft size={20} className="hover:text-primary-500 transition-colors" />
             <span>返回首页</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-800">我的日程</h1>
           <button
             onClick={() => setShowSetupModal(true)}
-            className="flex items-center space-x-2 bg-primary-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all"
+            className="flex items-center space-x-2 bg-primary-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all group"
           >
-            <Settings size={18} />
+            <Settings size={18} className="group-hover:rotate-12 transition-transform duration-300" />
             <span>计划设置</span>
           </button>
         </div>
@@ -80,9 +80,9 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
                   className="mt-1 flex-shrink-0"
                 >
                   {schedule.status === 'completed' ? (
-                    <CheckCircle className="text-accent-500" size={24} />
+                    <CheckCircle className="text-accent-500 group-hover:scale-110 transition-transform duration-300" size={24} />
                   ) : (
-                    <Circle className="text-gray-400" size={24} />
+                    <Circle className="text-gray-400 group-hover:text-primary-500 transition-colors cursor-pointer" size={24} />
                   )}
                 </button>
                 <div className="flex-1">
@@ -95,17 +95,17 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
                     </span>
                   </div>
                   <p className="text-gray-600 text-sm mb-2">{schedule.description}</p>
-                  <div className="flex items-center space-x-2">
-                    <Calendar size={14} className="text-gray-400" />
-                    <span className="text-xs text-gray-500">{schedule.date}</span>
+                  <div className="flex items-center space-x-2 group">
+                    <Calendar size={14} className="text-gray-400 group-hover:text-primary-500 transition-colors" />
+                    <span className="text-xs text-gray-500 group-hover:text-primary-600 transition-colors">{schedule.date}</span>
                   </div>
                 </div>
               </div>
             ))}
           </div>
 
-          <button className="w-full mt-6 flex items-center justify-center space-x-2 bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition-colors">
-            <Plus size={20} />
+          <button className="w-full mt-6 flex items-center justify-center space-x-2 bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-primary-500 hover:text-white transition-all duration-300 group">
+            <Plus size={20} className="transform group-hover:rotate-90 transition-transform duration-300" />
             <span>添加新日程</span>
           </button>
         </div>
@@ -113,68 +113,120 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
         {/* 统计图表 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* 成长轨迹 */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center space-x-2 mb-4">
-              <TrendingUp className="text-accent-500" size={24} />
+        <div className="bg-white rounded-xl shadow-lg p-6 border border-primary-50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          <div className="flex items-center space-x-2 mb-4 group">
+              <BarChart3 className="text-primary-500 group-hover:text-primary-600 transition-colors" size={24} />
               <h2 className="text-xl font-bold text-gray-800">成长轨迹 - 日程完成趋势</h2>
             </div>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={weeklyCheckInData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="week" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="count" stroke="#22c55e" strokeWidth={3} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                <XAxis dataKey="week" tick={{ fill: '#6b7280' }} />
+                <YAxis tick={{ fill: '#6b7280' }} />
+                <Tooltip 
+                  contentStyle={{ 
+                    borderRadius: '8px', 
+                    border: '1px solid #fcd34d',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                  }} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="count" 
+                  stroke="#ff6b1a" 
+                  strokeWidth={3} 
+                  dot={{ stroke: '#ff6b1a', strokeWidth: 2, r: 5, fill: 'white' }}
+                  activeDot={{ r: 7, stroke: '#ff6b1a', strokeWidth: 2, fill: '#ff6b1a' }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
-
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center space-x-2 mb-4">
-              <TrendingUp className="text-primary-500" size={24} />
+        
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-primary-50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center space-x-2 mb-4 group">
+              <BarChart3 className="text-tech-500 group-hover:text-tech-600 transition-colors" size={24} />
               <h2 className="text-xl font-bold text-gray-800">成长轨迹 - 积分增长趋势</h2>
             </div>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={weeklyPointsData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="week" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="points" stroke="#f97316" strokeWidth={3} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                <XAxis dataKey="week" tick={{ fill: '#6b7280' }} />
+                <YAxis tick={{ fill: '#6b7280' }} />
+                <Tooltip 
+                  contentStyle={{ 
+                    borderRadius: '8px', 
+                    border: '1px solid #fcd34d',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                  }} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="points" 
+                  stroke="#008cff" 
+                  strokeWidth={3} 
+                  dot={{ stroke: '#008cff', strokeWidth: 2, r: 5, fill: 'white' }}
+                  activeDot={{ r: 7, stroke: '#008cff', strokeWidth: 2, fill: '#008cff' }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
           {/* 学习达人 */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center space-x-2 mb-4">
-              <TrendingUp className="text-secondary-500" size={24} />
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-primary-50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center space-x-2 mb-4 group">
+              <BarChart3 className="text-secondary-500 group-hover:text-secondary-600 transition-colors" size={24} />
               <h2 className="text-xl font-bold text-gray-800">学习达人 - 观看时长</h2>
             </div>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={learningTimeData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="hours" stroke="#eab308" strokeWidth={3} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                <XAxis dataKey="month" tick={{ fill: '#6b7280' }} />
+                <YAxis tick={{ fill: '#6b7280' }} />
+                <Tooltip 
+                  contentStyle={{ 
+                    borderRadius: '8px', 
+                    border: '1px solid #fcd34d',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                  }} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="hours" 
+                  stroke="#ff7700" 
+                  strokeWidth={3} 
+                  dot={{ stroke: '#ff7700', strokeWidth: 2, r: 5, fill: 'white' }}
+                  activeDot={{ r: 7, stroke: '#ff7700', strokeWidth: 2, fill: '#ff7700' }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
           {/* 朋友圈达人 */}
-          <div className="bg-white rounded-xl shadow-lg p-6">
-            <div className="flex items-center space-x-2 mb-4">
-              <TrendingUp className="text-accent-500" size={24} />
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-primary-50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div className="flex items-center space-x-2 mb-4 group">
+              <BarChart3 className="text-accent-500 group-hover:text-accent-600 transition-colors" size={24} />
               <h2 className="text-xl font-bold text-gray-800">朋友圈达人 - 拉新助力</h2>
             </div>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={referralData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Line type="monotone" dataKey="count" stroke="#16a34a" strokeWidth={3} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                <XAxis dataKey="month" tick={{ fill: '#6b7280' }} />
+                <YAxis tick={{ fill: '#6b7280' }} />
+                <Tooltip 
+                  contentStyle={{ 
+                    borderRadius: '8px', 
+                    border: '1px solid #fcd34d',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                  }} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="count" 
+                  stroke="#1a92ff" 
+                  strokeWidth={3} 
+                  dot={{ stroke: '#1a92ff', strokeWidth: 2, r: 5, fill: 'white' }}
+                  activeDot={{ r: 7, stroke: '#1a92ff', strokeWidth: 2, fill: '#1a92ff' }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>

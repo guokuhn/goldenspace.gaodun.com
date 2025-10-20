@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MessageCircle, Send } from 'lucide-react';
+import { Send, Sparkles, Bot, User as UserIcon } from 'lucide-react';
 import { User } from '../types';
 
 interface DailyReportProps {
@@ -23,7 +23,7 @@ export default function DailyReport({ user }: DailyReportProps) {
       // 播报每日数据
       if (user) {
         setTimeout(() => {
-          const dailyReport = `📊 今日数据播报：
+          const dailyReport = ` 今日数据播报：
           
 ✅ 本周已完成打卡：5次
 🏆 累计获得积分：${user.points}分
@@ -60,39 +60,43 @@ export default function DailyReport({ user }: DailyReportProps) {
   };
 
   return (
-    <div className="bg-gradient-to-br from-white to-primary-50 rounded-2xl shadow-lg p-6 border border-primary-100">
+    <div className="tech-card p-6">
       <div className="flex items-center space-x-3 mb-4">
-        <div className="text-4xl">👩‍🏫</div>
+        <div className="text-4xl relative group">
+          <Bot className="text-primary-600" size={40} />
+          <div className="absolute -top-2 -right-2 text-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity">
+            <Sparkles size={20} className="animate-pulse" />
+          </div>
+        </div>
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">每日报告</h2>
-          <p className="text-sm text-gray-600">AI助理 Golden 为您服务</p>
+          <h2 className="text-2xl font-bold text-gradient">每日报告</h2>
+          <p className="text-sm text-primary-600">AI助理 Golden 为您服务</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl p-4 mb-4 max-h-96 overflow-y-auto space-y-4 scrollbar-hide">
+      <div className="bg-white bg-opacity-70 backdrop-blur-sm rounded-xl p-4 mb-4 max-h-96 overflow-y-auto space-y-4 scrollbar-hide border border-primary-50">
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
+            className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'} items-start gap-2`}
           >
+            {!msg.isUser && <Bot size={16} className="text-primary-500 mt-1 flex-shrink-0" />}
             <div
-              className={`max-w-[80%] p-3 rounded-lg ${
-                msg.isUser
-                  ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white'
-                  : 'bg-gray-100 text-gray-800'
-              }`}
+              className={`max-w-[80%] p-3 rounded-lg ${msg.isUser ? 'bg-button-gradient text-white' : 'bg-primary-50 text-gray-800 border border-primary-100'}`}
             >
               <p className="whitespace-pre-line text-sm">{msg.text}</p>
             </div>
+            {msg.isUser && <UserIcon size={16} className="text-primary-500 mt-1 flex-shrink-0" />}
           </div>
         ))}
         {isTyping && (
-          <div className="flex justify-start">
-            <div className="bg-gray-100 p-3 rounded-lg">
+          <div className="flex justify-start items-start gap-2">
+            <Bot size={16} className="text-primary-500 mt-1 flex-shrink-0" />
+            <div className="bg-primary-50 p-3 rounded-lg border border-primary-100">
               <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
             </div>
           </div>

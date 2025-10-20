@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, CheckCircle, Circle, Plus, TrendingUp, ArrowRight } from 'lucide-react';
+import { Calendar, CheckCircle, Circle, Plus, BarChart3, ArrowRight } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { mockSchedules, weeklyCheckInData, weeklyPointsData } from '../data/mockData';
 
@@ -20,37 +20,37 @@ export default function MySchedule({ isLoggedIn, onLoginClick }: MyScheduleProps
 
   if (!isLoggedIn) {
     return (
-      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+      <div className="tech-card p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
             <Calendar className="text-primary-500" size={24} />
-            <h2 className="text-xl font-bold text-gray-800">我的日程</h2>
+            <h2 className="text-xl font-bold text-gradient">我的日程</h2>
           </div>
         </div>
         <div className="text-center py-12">
-          <div className="text-6xl mb-4">📅</div>
-          <p className="text-gray-600 mb-6">登录后开始制定您的成长计划</p>
-          <button
-            onClick={onLoginClick}
-            className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-8 py-3 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all"
-          >
-            立即登录
-          </button>
-        </div>
+            <Calendar className="text-6xl text-primary-400 mb-4 mx-auto" size={80} />
+            <p className="text-gray-600 mb-6">登录后开始制定您的成长计划</p>
+            <button
+              onClick={onLoginClick}
+              className="tech-button px-8 py-3"
+            >
+              立即登录
+            </button>
+          </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+    <div className="tech-card p-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
           <Calendar className="text-primary-500" size={24} />
-          <h2 className="text-xl font-bold text-gray-800">我的日程</h2>
+          <h2 className="text-xl font-bold text-gradient">我的日程</h2>
         </div>
         <Link 
           to="/schedule"
-          className="text-primary-500 hover:text-primary-600 flex items-center space-x-1 text-sm"
+          className="tech-link text-sm"
         >
           <span>查看详情</span>
           <ArrowRight size={16} />
@@ -65,16 +65,16 @@ export default function MySchedule({ isLoggedIn, onLoginClick }: MyScheduleProps
             {schedules.slice(0, 5).map((schedule) => (
               <div
                 key={schedule.id}
-                className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-start space-x-3 p-3 rounded-lg bg-white/70 backdrop-blur-sm hover:bg-primary-50 transition-all duration-300 border border-primary-50"
               >
                 <button
                   onClick={() => toggleComplete(schedule.id)}
-                  className="mt-1 flex-shrink-0"
+                  className="mt-1 flex-shrink-0 transition-transform hover:scale-110"
                 >
                   {schedule.status === 'completed' ? (
-                    <CheckCircle className="text-accent-500" size={20} />
+                    <CheckCircle className="text-primary-500" size={20} />
                   ) : (
-                    <Circle className="text-gray-400" size={20} />
+                    <Circle className="text-gray-400 hover:text-primary-500 transition-colors" size={20} />
                   )}
                 </button>
                 <div className="flex-1 min-w-0">
@@ -92,7 +92,7 @@ export default function MySchedule({ isLoggedIn, onLoginClick }: MyScheduleProps
             ))}
           </div>
 
-          <button className="w-full flex items-center justify-center space-x-2 bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition-colors">
+          <button className="w-full flex items-center justify-center space-x-2 bg-primary-50 text-primary-700 py-3 rounded-lg hover:bg-primary-100 transition-colors border border-primary-100">
             <Plus size={20} />
             <span>添加日程</span>
           </button>
@@ -101,35 +101,61 @@ export default function MySchedule({ isLoggedIn, onLoginClick }: MyScheduleProps
         {/* 右侧：趋势图 */}
         <div className="space-y-6">
           {/* 日程完成趋势 */}
-          <div>
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-md border border-primary-50">
             <div className="flex items-center space-x-2 mb-4">
-              <TrendingUp className="text-accent-500" size={20} />
+              <BarChart3 className="text-accent-500" size={20} />
               <h3 className="font-semibold text-gray-800">日程完成趋势</h3>
             </div>
             <ResponsiveContainer width="100%" height={180}>
               <LineChart data={weeklyCheckInData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="week" tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 10 }} />
-                <Tooltip />
-                <Line type="monotone" dataKey="count" stroke="#22c55e" strokeWidth={2} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                <XAxis dataKey="week" tick={{ fontSize: 10, fill: '#6b7280' }} />
+                <YAxis tick={{ fontSize: 10, fill: '#6b7280' }} />
+                <Tooltip 
+                  contentStyle={{ 
+                    borderRadius: '8px', 
+                    border: '1px solid #fcd34d',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                  }} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="count" 
+                  stroke="#ff6b1a" 
+                  strokeWidth={3} 
+                  dot={{ stroke: '#ff6b1a', strokeWidth: 2, r: 4, fill: 'white' }}
+                  activeDot={{ r: 6, stroke: '#ff6b1a', strokeWidth: 2, fill: '#ff6b1a' }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
           {/* 积分增长趋势 */}
-          <div>
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-md border border-primary-50">
             <div className="flex items-center space-x-2 mb-4">
-              <TrendingUp className="text-primary-500" size={20} />
+              <BarChart3 className="text-primary-500" size={20} />
               <h3 className="font-semibold text-gray-800">积分增长趋势</h3>
             </div>
             <ResponsiveContainer width="100%" height={180}>
               <LineChart data={weeklyPointsData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="week" tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 10 }} />
-                <Tooltip />
-                <Line type="monotone" dataKey="points" stroke="#f97316" strokeWidth={2} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                <XAxis dataKey="week" tick={{ fontSize: 10, fill: '#6b7280' }} />
+                <YAxis tick={{ fontSize: 10, fill: '#6b7280' }} />
+                <Tooltip 
+                  contentStyle={{ 
+                    borderRadius: '8px', 
+                    border: '1px solid #fcd34d',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                  }} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="points" 
+                  stroke="#008cff" 
+                  strokeWidth={3} 
+                  dot={{ stroke: '#008cff', strokeWidth: 2, r: 4, fill: 'white' }}
+                  activeDot={{ r: 6, stroke: '#008cff', strokeWidth: 2, fill: '#008cff' }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>

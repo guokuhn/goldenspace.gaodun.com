@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Search, Filter, Users } from 'lucide-react';
+import { ArrowLeft, Search, Filter, Users, Video } from 'lucide-react';
 import { mockLives } from '../data/mockData';
 
 export default function LivesPage() {
@@ -19,8 +19,8 @@ export default function LivesPage() {
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
       <div className="bg-white shadow-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-gray-800">
-            <ArrowLeft size={20} />
+          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
+            <ArrowLeft size={20} className="hover:text-primary-500 transition-colors" />
             <span>返回首页</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-800">公益直播</h1>
@@ -34,7 +34,7 @@ export default function LivesPage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div className="md:col-span-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-primary-400" size={20} />
                 <input
                   type="text"
                   value={searchTerm}
@@ -46,9 +46,9 @@ export default function LivesPage() {
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 mb-3">
-            <Filter size={18} className="text-gray-600" />
-            <span className="font-semibold text-gray-700">筛选条件</span>
+          <div className="flex items-center space-x-2 mb-3 group">
+            <Filter size={18} className="text-primary-500 group-hover:text-primary-600 transition-colors" />
+            <span className="font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">筛选条件</span>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -98,14 +98,23 @@ export default function LivesPage() {
               <div className="absolute top-3 right-3 z-10 bg-red-500 text-white text-xs px-2 py-1 rounded animate-pulse">
                 直播中
               </div>
-              <div className="bg-gradient-to-br from-accent-100 to-green-100 p-8 text-center relative">
-                <div className="text-6xl">{live.cover}</div>
+              <div className="w-full aspect-video overflow-hidden relative">
+                <img 
+                  src={live.cover} 
+                  alt={live.title} 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
+                    <Video className="text-accent-600" size={32} />
+                  </div>
+                </div>
               </div>
               <div className="p-4">
                 <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2 h-12">{live.title}</h3>
-                <div className="flex items-center space-x-1 text-gray-600 mb-3">
-                  <Users size={16} />
-                  <span className="text-sm">{live.viewers} 人观看</span>
+                <div className="flex items-center space-x-1 text-gray-600 mb-3 group">
+                  <Users size={16} className="text-accent-500 group-hover:text-accent-600 transition-colors" />
+                  <span className="text-sm group-hover:text-accent-600 transition-colors">{live.viewers} 人观看</span>
                 </div>
                 <div className="flex flex-wrap gap-1 mb-3">
                   {live.tags.map((tag, idx) => (
