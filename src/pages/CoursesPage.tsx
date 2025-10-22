@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Search, Filter } from 'lucide-react';
 import { mockCourses } from '../data/mockData';
@@ -16,7 +16,7 @@ export default function CoursesPage() {
   const majors = ['计算机', '经济学', '管理学', '法学', '医学', '工程'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
+    <div className="min-h-screen">
       <div className="bg-white shadow-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
@@ -103,7 +103,7 @@ export default function CoursesPage() {
                 />
               </div>
               <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2 h-12">{course.title}</h3>
+                <h3 className="font-semibold module-secondary mb-2 line-clamp-2 h-12">{course.title}</h3>
                 <div className="flex flex-wrap gap-1 mb-3">
                   {course.tags.map((tag, idx) => (
                     <span key={idx} className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded">
@@ -111,7 +111,7 @@ export default function CoursesPage() {
                     </span>
                   ))}
                 </div>
-                <button className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white py-2 rounded-lg hover:shadow-lg transition-all">
+                <button className="w-full primary-button py-2">
                   立即领取
                 </button>
               </div>
@@ -126,7 +126,7 @@ export default function CoursesPage() {
               key={page}
               className={`w-10 h-10 rounded-lg font-semibold transition-all ${
                 page === 1
-                  ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white'
+                  ? 'primary-button'
                   : 'bg-white text-gray-700 hover:bg-gray-100'
               }`}
             >

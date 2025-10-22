@@ -33,7 +33,7 @@ export default function UserScheduleDetailPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
+    <div className="min-h-screen">
       <div className="bg-white shadow-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/schedule-square" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
@@ -55,11 +55,11 @@ export default function UserScheduleDetailPage() {
             <div className="flex items-center space-x-4">
               <div className="text-4xl">{userInfo.avatar}</div>
               <div>
-                <h2 className="text-xl font-bold text-gray-800">{userInfo.name}</h2>
-                <p className="text-gray-600">{userInfo.school}</p>
+                <h2 className="text-xl font-bold text-neutral-800">{userInfo.name}</h2>
+              <p className="text-neutral-600">{userInfo.school}</p>
               </div>
             </div>
-            <div className="bg-tech-100 text-tech-700 px-4 py-2 rounded-lg font-semibold text-lg">
+            <div className="bg-accent/10 text-accent px-4 py-2 rounded-lg font-semibold text-lg">
               {userInfo.points} 积分
             </div>
           </div>
@@ -74,8 +74,8 @@ export default function UserScheduleDetailPage() {
                 onClick={() => setView(v)}
                 className={`px-6 py-2 rounded-lg font-medium transition-all ${
                   view === v
-                    ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'primary-button'
+                    : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
                 }`}
               >
                 {v === 'week' ? '周' : v === 'month' ? '月' : v === 'semester' ? '学期' : '年度'}
@@ -99,7 +99,7 @@ export default function UserScheduleDetailPage() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className={`text-lg font-semibold ${schedule.status === 'completed' ? 'text-gray-400 line-through' : 'text-gray-800'}`}>
+                    <h3 className={`text-lg font-semibold ${schedule.status === 'completed' ? 'text-gray-400 line-through' : 'module-secondary'}`}>
                       {schedule.title}
                     </h3>
                     <span className="text-sm bg-primary-100 text-primary-700 px-3 py-1 rounded-full font-semibold">
@@ -118,15 +118,15 @@ export default function UserScheduleDetailPage() {
         </div>
 
         {/* 学习数据统计 */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6 border border-primary-50">
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6 border border-neutral-100">
           <div className="flex items-center space-x-2 mb-6 group">
-            <BarChart3 className="text-tech-500 group-hover:text-tech-600 transition-colors" size={24} />
-            <h2 className="text-xl font-bold text-gray-800">学习数据统计</h2>
+            <BarChart3 className="text-primary-500 group-hover:text-primary-600 transition-colors" size={24} />
+            <h2 className="text-xl font-bold text-neutral-800">学习数据统计</h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-md border border-primary-50 hover:shadow-lg transition-all duration-300">
-              <h3 className="text-lg font-semibold text-gray-700 mb-4">积分趋势</h3>
+              <h3 className="text-lg font-semibold module-secondary mb-4">积分趋势</h3>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={weeklyPointsData}>
@@ -154,7 +154,7 @@ export default function UserScheduleDetailPage() {
             </div>
             
             <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-md border border-primary-50 hover:shadow-lg transition-all duration-300">
-              <h3 className="text-lg font-semibold text-gray-700 mb-4">学习时长 (小时/月)</h3>
+              <h3 className="text-lg font-semibold module-secondary mb-4">学习时长 (小时/月)</h3>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={learningTimeData}>

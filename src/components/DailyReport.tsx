@@ -60,39 +60,44 @@ export default function DailyReport({ user }: DailyReportProps) {
   };
 
   return (
-    <div className="tech-card p-6">
+    <div className="card p-6 bg-white h-[750px] flex flex-col">
       <div className="flex items-center space-x-3 mb-4">
-        <div className="text-4xl relative group">
-          <Bot className="text-primary-600" size={40} />
-          <div className="absolute -top-2 -right-2 text-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="text-4xl relative group bg-primary-50 rounded-2xl p-3 border-2 border-primary-400">
+          <Bot className="text-primary-400" size={40} />
+          <div className="absolute -top-2 -right-2 text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity">
             <Sparkles size={20} className="animate-pulse" />
           </div>
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-gradient">每日报告</h2>
-          <p className="text-sm text-primary-600">AI助理 Golden 为您服务</p>
+          <h2 className="text-2xl font-bold text-primary-400">每日报告</h2>
+          <p className="text-sm text-neutral-400">AI助理 Golden 为您服务</p>
         </div>
       </div>
 
-      <div className="bg-white bg-opacity-70 backdrop-blur-sm rounded-xl p-4 mb-4 max-h-96 overflow-y-auto space-y-4 scrollbar-hide border border-primary-50">
+      <div className="bg-white rounded-xl p-4 mb-4 flex-1 overflow-y-auto space-y-4 scrollbar-hide border border-primary-400">
         {messages.map((msg, index) => (
           <div
             key={index}
             className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'} items-start gap-2`}
           >
-            {!msg.isUser && <Bot size={16} className="text-primary-500 mt-1 flex-shrink-0" />}
+            {!msg.isUser && <Bot size={16} className="text-primary-400 mt-1 flex-shrink-0" />}
             <div
-              className={`max-w-[80%] p-3 rounded-lg ${msg.isUser ? 'bg-button-gradient text-white' : 'bg-primary-50 text-gray-800 border border-primary-100'}`}
+              className={`max-w-[80%] p-3 rounded-lg ${msg.isUser ? 'bg-primary-400 text-white' : 'bg-primary-50 text-neutral-800 border border-primary-400/20'}`}
             >
-              <p className="whitespace-pre-line text-sm">{msg.text}</p>
+              <p className="whitespace-pre-line text-sm leading-relaxed">{msg.text}</p>
+              {!msg.isUser && msg.text.includes('积分') && (
+                <div className="mt-2 pt-2 border-t border-primary-400/20">
+                  <span className="inline-block bg-primary-50 text-primary-400 text-xs px-2 py-1 rounded-full">推荐课程</span>
+                </div>
+              )}
             </div>
-            {msg.isUser && <UserIcon size={16} className="text-primary-500 mt-1 flex-shrink-0" />}
+            {msg.isUser && <UserIcon size={16} className="text-neutral-400 mt-1 flex-shrink-0" />}
           </div>
         ))}
         {isTyping && (
           <div className="flex justify-start items-start gap-2">
-            <Bot size={16} className="text-primary-500 mt-1 flex-shrink-0" />
-            <div className="bg-primary-50 p-3 rounded-lg border border-primary-100">
+            <Bot size={16} className="text-primary-400 mt-1 flex-shrink-0" />
+            <div className="bg-primary-50 p-3 rounded-lg border border-primary-400/20">
               <div className="flex space-x-2">
                 <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce"></div>
                 <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
@@ -110,11 +115,11 @@ export default function DailyReport({ user }: DailyReportProps) {
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handleSend()}
           placeholder="有什么问题尽管问我..."
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+          className="flex-1 px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-400 focus:border-primary-400 outline-none transition-all placeholder:text-neutral-400"
         />
         <button
           onClick={handleSend}
-          className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-6 py-2 rounded-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all"
+          className="bg-primary-400 hover:bg-primary-500 text-white px-6 py-2 rounded-lg transition-all duration-300 transform hover:scale-105"
         >
           <Send size={20} />
         </button>

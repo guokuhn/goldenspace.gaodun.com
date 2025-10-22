@@ -29,7 +29,7 @@ export default function LoginModal({ onClose, onLogin }: LoginModalProps) {
         {/* 科技感背景装饰 */}
         <div className="absolute -inset-0.5 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl blur opacity-75 group-hover:opacity-100 transition duration-1000 animate-pulse"></div>
         
-        <div className="relative bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-tech-100">
+        <div className="relative bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-neutral-100">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 text-gray-400 hover:text-primary-500 transition-colors"
@@ -86,7 +86,7 @@ export default function LoginModal({ onClose, onLogin }: LoginModalProps) {
             <button
               type="submit"
               disabled={phone.length !== 11 || !name.trim()}
-              className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white py-3 rounded-lg font-semibold hover:shadow-lg transform hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full primary-button py-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               立即登录
             </button>

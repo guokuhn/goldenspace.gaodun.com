@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Trophy } from 'lucide-react';
+import { ArrowLeft, Trophy, Crown, Sparkles } from 'lucide-react';
 import { mockRankings } from '../data/mockData';
 
 export default function RankingDetailPage() {
@@ -17,25 +17,27 @@ export default function RankingDetailPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
-      <div className="bg-white shadow-md sticky top-0 z-10">
+    <div className="min-h-screen">
+      <div className="bg-white shadow-sm sticky top-0 z-10 border-b border-neutral-200">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
-            <ArrowLeft size={20} className="hover:text-primary-500 transition-colors" />
+          <Link to="/" className="flex items-center space-x-2 text-neutral-600 hover:text-primary-400 transition-colors">
+            <ArrowLeft size={20} />
             <span>返回首页</span>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-800">排行榜</h1>
+          <h1 className="text-2xl font-bold text-neutral-800">排行榜</h1>
           <div className="w-20"></div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         {/* 百万成长计划介绍 */}
-        <div className="bg-gradient-to-r from-secondary-100 via-primary-100 to-accent-100 rounded-2xl shadow-lg p-8 mb-8 text-center">
-          <div className="text-6xl mb-4">🎉</div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">百万成长计划</h2>
-          <p className="text-xl text-gray-700 mb-4">百万公益基金，助你成为更好的自己！</p>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+        <div className="bg-gradient-to-br from-primary-50 to-white rounded-2xl shadow-sm p-8 mb-8 text-center border border-primary-200">
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <Crown className="text-primary-400" size={32} />
+          </div>
+          <h2 className="text-3xl font-bold text-neutral-800 mb-3">百万成长计划</h2>
+          <p className="text-lg text-neutral-700 font-semibold mb-4">百万公益基金，助你成为更好的自己！</p>
+          <p className="text-neutral-600 max-w-2xl mx-auto text-sm leading-relaxed">
             高顿公司面向全国大学生提供高顿云空间平台和百万公益基金，将根据每月、每学期、每年的积分排名，定期瓜分奖金。坚持打卡，提升自己，赢取奖励！
           </p>
         </div>
@@ -48,8 +50,8 @@ export default function RankingDetailPage() {
               onClick={() => setRankingType(type.key as any)}
               className={`p-4 rounded-xl transition-all ${
                 rankingType === type.key
-                  ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg transform -translate-y-1'
-                  : 'bg-white text-gray-700 hover:shadow-md'
+                  ? 'bg-primary-400 text-white shadow-md'
+                  : 'bg-white text-neutral-700 hover:shadow-md border border-neutral-200 hover:border-primary-300'
               }`}
             >
               <div className="text-3xl mb-1">{type.icon}</div>
@@ -59,16 +61,16 @@ export default function RankingDetailPage() {
         </div>
 
         {/* 周期切换 */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div className="flex space-x-2 mb-6">
+        <div className="bg-white rounded-2xl shadow-sm p-6 mb-6 border border-neutral-200">
+          <div className="flex space-x-3 mb-8">
             {(['week', 'month', 'semester', 'year'] as const).map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
-                className={`px-6 py-2 rounded-lg font-medium transition-all ${
+                className={`px-6 py-3 rounded-xl font-semibold transition-all ${
                   period === p
-                    ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-primary-400 text-white'
+                    : 'bg-white text-neutral-700 hover:bg-primary-50 border border-neutral-200'
                 }`}
               >
                 {p === 'week' ? '周榜' : p === 'month' ? '月榜' : p === 'semester' ? '学期榜' : '年度榜'}
@@ -77,57 +79,63 @@ export default function RankingDetailPage() {
           </div>
 
           {/* 前三名特殊展示 */}
-          <div className="grid grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-3 gap-6 mb-8">
             {mockRankings.slice(0, 3).map((user, index) => (
               <div
                 key={user.rank}
-                className={`text-center p-6 rounded-xl ${
-                  index === 0 ? 'bg-gradient-to-br from-yellow-100 to-yellow-200 transform -translate-y-2' :
-                  index === 1 ? 'bg-gradient-to-br from-gray-100 to-gray-200' :
-                  'bg-gradient-to-br from-orange-100 to-orange-200'
-                }`}
+                className="relative text-center p-6 rounded-2xl bg-white border border-neutral-200 hover:border-primary-300 transition-all"
               >
-                <div className={`text-6xl mb-2 ${index === 0 ? 'animate-bounce' : ''}`}>
+                <div className="text-6xl mb-3">
                   {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
                 </div>
-                <img 
-                  src={user.avatar} 
-                  alt={user.name} 
-                  className="w-16 h-16 rounded-full object-cover mx-auto mb-2"
-                />
-                <p className="font-bold text-gray-800 text-lg mb-1">{user.name}</p>
-                <div className="flex items-center justify-center space-x-1 group">
-                  <Trophy className="text-primary-600 group-hover:scale-110 transition-transform duration-300" size={20} />
-                  <span className="text-2xl font-bold text-primary-600">{user.points}</span>
+                <div className="relative inline-block mb-3">
+                  <img 
+                    src={user.avatar} 
+                    alt={user.name} 
+                    className="w-20 h-20 rounded-full object-cover border-2 border-neutral-200"
+                  />
+                  <div className={`absolute -bottom-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center font-bold text-white text-sm ${
+                    index === 0 ? 'bg-primary-400' : 
+                    index === 1 ? 'bg-primary-100 text-primary-400' : 
+                    'bg-primary-50 text-primary-400'
+                  }`}>
+                    {index + 1}
+                  </div>
+                </div>
+                <p className="font-bold text-neutral-800 text-lg mb-2">{user.name}</p>
+                <div className="flex items-center justify-center space-x-2 bg-neutral-50 rounded-lg py-2 px-4">
+                  <Trophy className="text-primary-400" size={20} />
+                  <span className="text-2xl font-bold text-primary-400">{user.points}</span>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* 其他排名 */}
-          <div className="space-y-2">
-            {mockRankings.slice(3, 5).map((user) => (
+          {/* 其他排名 (4-10名) */}
+          <div className="space-y-3">
+            {mockRankings.slice(3, 10).map((user, index) => (
               <div
                 key={user.rank}
-                className="flex items-center space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex items-center space-x-4 p-4 rounded-xl bg-white border border-neutral-200 hover:border-primary-300 transition-all cursor-pointer"
               >
-                <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full font-bold text-gray-700">
+                <div className="w-10 h-10 flex items-center justify-center bg-neutral-100 rounded-full font-bold text-neutral-600 text-base">
                   {user.rank}
                 </div>
                 <img 
                   src={user.avatar} 
                   alt={user.name} 
-                  className="w-10 h-10 rounded-full object-cover"
+                  className="w-10 h-10 rounded-full object-cover border border-neutral-200"
                 />
                 <div className="flex-1">
-                  <p className="font-semibold text-gray-800">{user.name}</p>
+                  <p className="font-bold text-neutral-800 text-base">{user.name}</p>
+                  <p className="text-xs text-neutral-500">排名 #{user.rank}</p>
                 </div>
                 <div className="text-right">
-                  <div className="flex items-center space-x-1 group">
-                    <Trophy className="text-primary-500 group-hover:scale-110 transition-transform duration-300" size={18} />
-                    <span className="text-xl font-bold text-primary-600">{user.points}</span>
+                  <div className="flex items-center space-x-2">
+                    <Trophy className="text-primary-400" size={18} />
+                    <span className="text-xl font-bold text-primary-400">{user.points}</span>
                   </div>
-                  <p className="text-xs text-gray-500">积分</p>
+                  <p className="text-xs text-neutral-500 mt-1">积分</p>
                 </div>
               </div>
             ))}

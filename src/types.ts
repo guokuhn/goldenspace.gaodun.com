@@ -13,10 +13,13 @@ export interface User {
 export interface Schedule {
   id: string;
   date: string;
+  time?: string;
   title: string;
   status: 'pending' | 'completed';
   description: string;
   points: number;
+  image?: string; // 日程配图
+  link?: string; // 点击跳转链接
 }
 
 export interface RankUser {

@@ -31,7 +31,7 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
   }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
+    <div className="min-h-screen">
       <div className="bg-white shadow-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
@@ -59,7 +59,7 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
                 onClick={() => setView(v)}
                 className={`px-6 py-2 rounded-lg font-medium transition-all ${
                   view === v
-                    ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg'
+                    ? 'primary-button'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -86,15 +86,15 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
                   )}
                 </button>
                 <div className="flex-1">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className={`text-lg font-semibold ${schedule.status === 'completed' ? 'text-gray-400 line-through' : 'text-gray-800'}`}>
-                      {schedule.title}
-                    </h3>
-                    <span className="text-sm bg-primary-100 text-primary-700 px-3 py-1 rounded-full font-semibold">
-                      +{schedule.points}积分
-                    </span>
-                  </div>
-                  <p className="text-gray-600 text-sm mb-2">{schedule.description}</p>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className={`text-base font-semibold ${schedule.status === 'completed' ? 'text-gray-400 line-through' : 'module-secondary'}`}>
+                {schedule.title}
+              </h3>
+              <span className="text-xs bg-primary-100 text-primary-700 px-2.5 py-1 rounded-full font-semibold">
+                +{schedule.points}积分
+              </span>
+            </div>
+            <p className="text-xs module-primary mt-1">{schedule.description}</p>
                   <div className="flex items-center space-x-2 group">
                     <Calendar size={14} className="text-gray-400 group-hover:text-primary-500 transition-colors" />
                     <span className="text-xs text-gray-500 group-hover:text-primary-600 transition-colors">{schedule.date}</span>
@@ -115,14 +115,14 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
           {/* 成长轨迹 */}
         <div className="bg-white rounded-xl shadow-lg p-6 border border-primary-50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
           <div className="flex items-center space-x-2 mb-4 group">
-              <BarChart3 className="text-primary-500 group-hover:text-primary-600 transition-colors" size={24} />
-              <h2 className="text-xl font-bold text-gray-800">成长轨迹 - 日程完成趋势</h2>
+              <BarChart3 className="text-primary-500 group-hover:text-primary-600 transition-colors" size={20} />
+              <h2 className="text-base font-bold text-gray-800">成长轨迹 - 日程完成趋势</h2>
             </div>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={weeklyCheckInData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-                <XAxis dataKey="week" tick={{ fill: '#6b7280' }} />
-                <YAxis tick={{ fill: '#6b7280' }} />
+                <XAxis dataKey="week" tick={{ fill: '#6b7280', fontSize: 11 }} />
+                <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} />
                 <Tooltip 
                   contentStyle={{ 
                     borderRadius: '8px', 
@@ -133,25 +133,25 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
                 <Line 
                   type="monotone" 
                   dataKey="count" 
-                  stroke="#ff6b1a" 
+                  stroke="#2790FD" 
                   strokeWidth={3} 
-                  dot={{ stroke: '#ff6b1a', strokeWidth: 2, r: 5, fill: 'white' }}
-                  activeDot={{ r: 7, stroke: '#ff6b1a', strokeWidth: 2, fill: '#ff6b1a' }}
+                  dot={{ stroke: '#2790FD', strokeWidth: 2, r: 5, fill: 'white' }}
+                  activeDot={{ r: 7, stroke: '#2790FD', strokeWidth: 2, fill: '#2790FD' }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
         
-          <div className="bg-white rounded-xl shadow-lg p-6 border border-primary-50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-neutral-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <div className="flex items-center space-x-2 mb-4 group">
-              <BarChart3 className="text-tech-500 group-hover:text-tech-600 transition-colors" size={24} />
-              <h2 className="text-xl font-bold text-gray-800">成长轨迹 - 积分增长趋势</h2>
+              <BarChart3 className="text-primary-500 group-hover:text-primary-600 transition-colors" size={20} />
+              <h2 className="text-base font-bold text-neutral-800">成长轨迹 - 积分增长趋势</h2>
             </div>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={weeklyPointsData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-                <XAxis dataKey="week" tick={{ fill: '#6b7280' }} />
-                <YAxis tick={{ fill: '#6b7280' }} />
+                <XAxis dataKey="week" tick={{ fill: '#6b7280', fontSize: 11 }} />
+                <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} />
                 <Tooltip 
                   contentStyle={{ 
                     borderRadius: '8px', 
@@ -162,10 +162,10 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
                 <Line 
                   type="monotone" 
                   dataKey="points" 
-                  stroke="#008cff" 
+                  stroke="#FF5792" 
                   strokeWidth={3} 
-                  dot={{ stroke: '#008cff', strokeWidth: 2, r: 5, fill: 'white' }}
-                  activeDot={{ r: 7, stroke: '#008cff', strokeWidth: 2, fill: '#008cff' }}
+                  dot={{ stroke: '#FF5792', strokeWidth: 2, r: 5, fill: 'white' }}
+                  activeDot={{ r: 7, stroke: '#FF5792', strokeWidth: 2, fill: '#FF5792' }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -174,14 +174,14 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
           {/* 学习达人 */}
           <div className="bg-white rounded-xl shadow-lg p-6 border border-primary-50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <div className="flex items-center space-x-2 mb-4 group">
-              <BarChart3 className="text-secondary-500 group-hover:text-secondary-600 transition-colors" size={24} />
-              <h2 className="text-xl font-bold text-gray-800">学习达人 - 观看时长</h2>
+              <BarChart3 className="text-secondary-500 group-hover:text-secondary-600 transition-colors" size={20} />
+              <h2 className="text-base font-bold text-neutral-800">学习达人 - 观看时长</h2>
             </div>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={learningTimeData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-                <XAxis dataKey="month" tick={{ fill: '#6b7280' }} />
-                <YAxis tick={{ fill: '#6b7280' }} />
+                <XAxis dataKey="month" tick={{ fill: '#6b7280', fontSize: 11 }} />
+                <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} />
                 <Tooltip 
                   contentStyle={{ 
                     borderRadius: '8px', 
@@ -192,10 +192,10 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
                 <Line 
                   type="monotone" 
                   dataKey="hours" 
-                  stroke="#ff7700" 
+                  stroke="#2790FD" 
                   strokeWidth={3} 
-                  dot={{ stroke: '#ff7700', strokeWidth: 2, r: 5, fill: 'white' }}
-                  activeDot={{ r: 7, stroke: '#ff7700', strokeWidth: 2, fill: '#ff7700' }}
+                  dot={{ stroke: '#2790FD', strokeWidth: 2, r: 5, fill: 'white' }}
+                  activeDot={{ r: 7, stroke: '#2790FD', strokeWidth: 2, fill: '#2790FD' }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -204,14 +204,14 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
           {/* 朋友圈达人 */}
           <div className="bg-white rounded-xl shadow-lg p-6 border border-primary-50 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <div className="flex items-center space-x-2 mb-4 group">
-              <BarChart3 className="text-accent-500 group-hover:text-accent-600 transition-colors" size={24} />
-              <h2 className="text-xl font-bold text-gray-800">朋友圈达人 - 拉新助力</h2>
+              <BarChart3 className="text-accent-500 group-hover:text-accent-600 transition-colors" size={20} />
+              <h2 className="text-base font-bold text-gray-800">朋友圈达人 - 拉新助力</h2>
             </div>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={referralData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-                <XAxis dataKey="month" tick={{ fill: '#6b7280' }} />
-                <YAxis tick={{ fill: '#6b7280' }} />
+                <XAxis dataKey="month" tick={{ fill: '#6b7280', fontSize: 11 }} />
+                <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} />
                 <Tooltip 
                   contentStyle={{ 
                     borderRadius: '8px', 
@@ -289,7 +289,7 @@ function PlanSetupModal({ onClose }: { onClose: () => void }) {
           </div>
           <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-gradient-to-r from-primary-500 to-secondary-500 transition-all duration-300"
+              className="h-full bg-primary-gradient transition-all duration-300"
               style={{ width: `${((step + 1) / questions.length) * 100}%` }}
             />
           </div>
@@ -340,7 +340,7 @@ function PlanSetupModal({ onClose }: { onClose: () => void }) {
           <button
             onClick={handleNext}
             disabled={!formData[currentQuestion.key as keyof typeof formData]}
-            className="flex-1 bg-gradient-to-r from-primary-500 to-secondary-500 text-white py-3 rounded-lg font-semibold hover:shadow-lg transform hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="flex-1 primary-button py-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
             {step === questions.length - 1 ? '生成计划' : '下一步'}
           </button>

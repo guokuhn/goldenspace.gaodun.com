@@ -1,8 +1,12 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Calendar, CheckCircle, Circle, Plus, BarChart3, ArrowRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Calendar, CheckCircle, Circle, Plus, BarChart3, ArrowRight, Smartphone, ExternalLink } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { mockSchedules, weeklyCheckInData, weeklyPointsData } from '../data/mockData';
+import { Schedule } from '../types';
+import AddScheduleModal from './AddScheduleModal';
+import SyncScheduleModal from './SyncScheduleModal';
+import ReferralConfirmModal from './ReferralConfirmModal';
 
 interface MyScheduleProps {
   isLoggedIn: boolean;
@@ -10,47 +14,142 @@ interface MyScheduleProps {
 }
 
 export default function MySchedule({ isLoggedIn, onLoginClick }: MyScheduleProps) {
-  const [schedules, setSchedules] = useState(mockSchedules);
+  const navigate = useNavigate();
+  const [schedules, setSchedules] = useState<Schedule[]>(mockSchedules);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showSyncModal, setShowSyncModal] = useState(false);
+  const [showReferralModal, setShowReferralModal] = useState(false);
+  const [pendingScheduleId, setPendingScheduleId] = useState<string | null>(null);
+
+  // 加载用户的个性化日程
+  useEffect(() => {
+    if (isLoggedIn) {
+      const savedSchedules = localStorage.getItem('userSchedules');
+      if (savedSchedules) {
+        try {
+          const parsedSchedules = JSON.parse(savedSchedules);
+          setSchedules(parsedSchedules);
+        } catch (error) {
+          console.error('Failed to load schedules:', error);
+          setSchedules(mockSchedules);
+        }
+      }
+    }
+  }, [isLoggedIn]);
 
   const toggleComplete = (id: string) => {
-    setSchedules(schedules.map(s => 
-      s.id === id ? { ...s, status: s.status === 'completed' ? 'pending' : 'completed' } : s
-    ));
+    const schedule = schedules.find(s => s.id === id);
+    if (!schedule) return;
+
+    // 如果是取消完成状态，直接执行
+    if (schedule.status === 'completed') {
+      const updatedSchedules = schedules.map(s => 
+        s.id === id ? { ...s, status: 'pending' } : s
+      );
+      setSchedules(updatedSchedules);
+      localStorage.setItem('userSchedules', JSON.stringify(updatedSchedules));
+      return;
+    }
+
+    // 校验日期
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const scheduleDate = new Date(schedule.date);
+    scheduleDate.setHours(0, 0, 0, 0);
+    
+    // 如果提前标记（早于计划日期）
+    if (today < scheduleDate) {
+      alert(`不能提前完成日程！此日程计划日期为 ${schedule.date}，请在当天或之后标记完成。`);
+      return;
+    }
+    
+    // 如果当天标记，直接完成
+    if (today.getTime() === scheduleDate.getTime()) {
+      const updatedSchedules = schedules.map(s => 
+        s.id === id ? { ...s, status: 'completed' } : s
+      );
+      setSchedules(updatedSchedules);
+      localStorage.setItem('userSchedules', JSON.stringify(updatedSchedules));
+      return;
+    }
+    
+    // 如果晚于计划日期，需要拉新确认
+    setPendingScheduleId(id);
+    setShowReferralModal(true);
+  };
+
+  const handleReferralConfirm = () => {
+    if (!pendingScheduleId) return;
+    
+    // 标记日程完成
+    const updatedSchedules = schedules.map(s => 
+      s.id === pendingScheduleId ? { ...s, status: 'completed' } : s
+    );
+    setSchedules(updatedSchedules);
+    localStorage.setItem('userSchedules', JSON.stringify(updatedSchedules));
+    
+    // 重置状态
+    setShowReferralModal(false);
+    setPendingScheduleId(null);
+    
+    // 显示成功提示
+    alert('恭喜完成拉新任务！日程已标记为完成，您获得了50积分奖励🎉');
+  };
+
+  const handleAddSchedule = (newSchedule: {
+    title: string;
+    description: string;
+    date: string;
+  }) => {
+    const schedule: Schedule = {
+      id: `schedule-${Date.now()}`,
+      title: newSchedule.title,
+      description: newSchedule.description,
+      date: newSchedule.date,
+      time: '09:00', // 默认时间
+      status: 'pending',
+      points: 20 // 默认积分
+    };
+
+    const updatedSchedules = [schedule, ...schedules];
+    setSchedules(updatedSchedules);
+    // 保存到 localStorage
+    localStorage.setItem('userSchedules', JSON.stringify(updatedSchedules));
   };
 
   if (!isLoggedIn) {
     return (
-      <div className="tech-card p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-2">
-            <Calendar className="text-primary-500" size={24} />
-            <h2 className="text-xl font-bold text-gradient">我的日程</h2>
+      <div className="card p-6">
+          <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center space-x-2">
+            <Calendar className="module-icon" size={24} />
+            <h2 className="text-xl font-bold module-title">我的日程</h2>
           </div>
-        </div>
-        <div className="text-center py-12">
-            <Calendar className="text-6xl text-primary-400 mb-4 mx-auto" size={80} />
-            <p className="text-gray-600 mb-6">登录后开始制定您的成长计划</p>
-            <button
-              onClick={onLoginClick}
-              className="tech-button px-8 py-3"
-            >
-              立即登录
-            </button>
-          </div>
+      </div>
+      <div className="text-center py-12">
+        <Calendar className="text-6xl module-secondary mb-4 mx-auto" size={80} />
+        <p className="module-secondary mb-6">登录后开始制定您的成长计划</p>
+        <button
+          onClick={onLoginClick}
+          className="primary-button px-8 py-3"
+        >
+          立即登录
+        </button>
+      </div>
       </div>
     );
   }
 
   return (
-    <div className="tech-card p-6">
+    <div className="card p-6 h-[750px] flex flex-col">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
-          <Calendar className="text-primary-500" size={24} />
-          <h2 className="text-xl font-bold text-gradient">我的日程</h2>
+          <Calendar className="module-icon" size={24} />
+          <h2 className="text-xl font-bold module-title">我的日程</h2>
         </div>
         <Link 
           to="/schedule"
-          className="tech-link text-sm"
+          className="text-sm module-secondary hover:text-primary-600 flex items-center gap-1"
         >
           <span>查看详情</span>
           <ArrowRight size={16} />
@@ -58,54 +157,100 @@ export default function MySchedule({ isLoggedIn, onLoginClick }: MyScheduleProps
       </div>
 
       {/* 左右两栏布局 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 overflow-hidden">
         {/* 左侧：日程事项 */}
-        <div>
-          <div className="space-y-3 mb-6">
-            {schedules.slice(0, 5).map((schedule) => (
-              <div
-                key={schedule.id}
-                className="flex items-start space-x-3 p-3 rounded-lg bg-white/70 backdrop-blur-sm hover:bg-primary-50 transition-all duration-300 border border-primary-50"
-              >
-                <button
-                  onClick={() => toggleComplete(schedule.id)}
-                  className="mt-1 flex-shrink-0 transition-transform hover:scale-110"
+        <div className="flex flex-col h-full">
+          <div className="space-y-3 mb-6 flex-1 overflow-y-auto scrollbar-hide">
+            {schedules.slice(0, 5).map((schedule) => {
+              const hasLink = !!schedule.link;
+              
+              return (
+                <div
+                  key={schedule.id}
+                  className={`flex items-start space-x-3 p-3 rounded-lg bg-white border border-neutral-200 hover:border-primary-300 transition-all duration-300 ${hasLink ? 'cursor-pointer hover:shadow-md' : ''}`}
+                  onClick={(e) => {
+                    // 如果点击的是复选框，不触发跳转
+                    if ((e.target as HTMLElement).closest('.checkbox-btn')) {
+                      return;
+                    }
+                    if (hasLink) {
+                      if (schedule.link?.startsWith('http')) {
+                        window.open(schedule.link, '_blank');
+                      } else if (schedule.link) {
+                        navigate(schedule.link);
+                      }
+                    }
+                  }}
                 >
-                  {schedule.status === 'completed' ? (
-                    <CheckCircle className="text-primary-500" size={20} />
-                  ) : (
-                    <Circle className="text-gray-400 hover:text-primary-500 transition-colors" size={20} />
+                  <button
+                    onClick={() => toggleComplete(schedule.id)}
+                    className="mt-1 flex-shrink-0 transition-transform hover:scale-110 checkbox-btn"
+                  >
+                    {schedule.status === 'completed' ? (
+                      <CheckCircle className="text-primary-400" size={20} />
+                    ) : (
+                      <Circle className="text-neutral-400 hover:text-primary-400 transition-colors" size={20} />
+                    )}
+                  </button>
+                  
+                  {/* 图片区域 */}
+                  {schedule.image && (
+                    <div className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border border-neutral-200 bg-neutral-100">
+                      <img 
+                        src={schedule.image} 
+                        alt={schedule.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // 图片加载失败时显示占位符
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          if (target.parentElement) {
+                            target.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center text-neutral-400 text-xs">📷</div>';
+                          }
+                        }}
+                      />
+                    </div>
                   )}
-                </button>
-                <div className="flex-1 min-w-0">
-                  <p className={`font-medium ${schedule.status === 'completed' ? 'text-gray-400 line-through' : 'text-gray-800'}`}>
-                    {schedule.title}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">{schedule.date} · {schedule.description}</p>
-                  <div className="flex items-center space-x-2 mt-2">
-                    <span className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded">
-                      +{schedule.points}积分
-                    </span>
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between">
+                      <p className={`font-medium text-primary-400 ${schedule.status === 'completed' ? 'line-through opacity-60' : ''}`}>
+                        {schedule.title}
+                      </p>
+                      {hasLink && (
+                        <ExternalLink size={14} className="text-primary-400 ml-2 flex-shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-xs text-neutral-500 mt-1">{schedule.date} · {schedule.description}</p>
+                    <div className="flex items-center space-x-2 mt-2">
+                      <span className="text-xs bg-primary-50 text-primary-400 px-2 py-1 rounded border border-primary-200">
+                        +{schedule.points}积分
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          <button className="w-full flex items-center justify-center space-x-2 bg-primary-50 text-primary-700 py-3 rounded-lg hover:bg-primary-100 transition-colors border border-primary-100">
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="w-full flex items-center justify-center space-x-2 bg-module-bg-primary/5 module-primary py-3 rounded-lg hover:bg-module-bg-primary/10 transition-colors border border-module-bg-primary/10 hover:shadow-md"
+          >
             <Plus size={20} />
             <span>添加日程</span>
           </button>
         </div>
 
         {/* 右侧：趋势图 */}
-        <div className="space-y-6">
+        <div className="flex flex-col h-full">
+          <div className="space-y-6 flex-1 overflow-y-auto scrollbar-hide">
           {/* 日程完成趋势 */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-md border border-primary-50">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-md border border-accent/10">
             <div className="flex items-center space-x-2 mb-4">
-              <BarChart3 className="text-accent-500" size={20} />
-              <h3 className="font-semibold text-gray-800">日程完成趋势</h3>
-            </div>
+            <BarChart3 className="text-primary-400" size={20} />
+            <h3 className="font-semibold text-primary-400">日程完成趋势</h3>
+          </div>
             <ResponsiveContainer width="100%" height={180}>
               <LineChart data={weeklyCheckInData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
@@ -114,28 +259,28 @@ export default function MySchedule({ isLoggedIn, onLoginClick }: MyScheduleProps
                 <Tooltip 
                   contentStyle={{ 
                     borderRadius: '8px', 
-                    border: '1px solid #fcd34d',
+                    border: '1px solid #2790FD',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                   }} 
                 />
                 <Line 
                   type="monotone" 
                   dataKey="count" 
-                  stroke="#ff6b1a" 
+                  stroke="#2790FD" 
                   strokeWidth={3} 
-                  dot={{ stroke: '#ff6b1a', strokeWidth: 2, r: 4, fill: 'white' }}
-                  activeDot={{ r: 6, stroke: '#ff6b1a', strokeWidth: 2, fill: '#ff6b1a' }}
+                  dot={{ stroke: '#2790FD', strokeWidth: 2, r: 4, fill: 'white' }}
+                  activeDot={{ r: 6, stroke: '#2790FD', strokeWidth: 2, fill: '#2790FD' }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
           {/* 积分增长趋势 */}
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-md border border-primary-50">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-md border border-accent/10">
             <div className="flex items-center space-x-2 mb-4">
-              <BarChart3 className="text-primary-500" size={20} />
-              <h3 className="font-semibold text-gray-800">积分增长趋势</h3>
-            </div>
+            <BarChart3 className="text-primary-400" size={20} />
+            <h3 className="font-semibold text-primary-400">积分增长趋势</h3>
+          </div>
             <ResponsiveContainer width="100%" height={180}>
               <LineChart data={weeklyPointsData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
@@ -144,23 +289,61 @@ export default function MySchedule({ isLoggedIn, onLoginClick }: MyScheduleProps
                 <Tooltip 
                   contentStyle={{ 
                     borderRadius: '8px', 
-                    border: '1px solid #fcd34d',
+                    border: '1px solid #FF5792',
                     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
                   }} 
                 />
                 <Line 
                   type="monotone" 
                   dataKey="points" 
-                  stroke="#008cff" 
+                  stroke="#FF5792" 
                   strokeWidth={3} 
-                  dot={{ stroke: '#008cff', strokeWidth: 2, r: 4, fill: 'white' }}
-                  activeDot={{ r: 6, stroke: '#008cff', strokeWidth: 2, fill: '#008cff' }}
+                  dot={{ stroke: '#FF5792', strokeWidth: 2, r: 4, fill: 'white' }}
+                  activeDot={{ r: 6, stroke: '#FF5792', strokeWidth: 2, fill: '#FF5792' }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
+          </div>
+
+          <button 
+            onClick={() => setShowSyncModal(true)}
+            className="w-full flex items-center justify-center space-x-2 bg-secondary-50 text-secondary-400 py-3 rounded-lg hover:bg-secondary-100 transition-colors border border-secondary-200 hover:shadow-md mt-6"
+          >
+            <Smartphone size={20} />
+            <span>同步至手机</span>
+          </button>
         </div>
       </div>
+
+      {/* 添加日程模态框 */}
+      {showAddModal && (
+        <AddScheduleModal
+          onClose={() => setShowAddModal(false)}
+          onAdd={handleAddSchedule}
+        />
+      )}
+
+      {/* 同步至手机模态框 */}
+      {showSyncModal && (
+        <SyncScheduleModal
+          onClose={() => setShowSyncModal(false)}
+          schedules={schedules}
+        />
+      )}
+
+      {/* 拉新确认模态框 */}
+      {showReferralModal && pendingScheduleId && (
+        <ReferralConfirmModal
+          onClose={() => {
+            setShowReferralModal(false);
+            setPendingScheduleId(null);
+          }}
+          onConfirm={handleReferralConfirm}
+          scheduleTitle={schedules.find(s => s.id === pendingScheduleId)?.title || ''}
+          scheduleDate={schedules.find(s => s.id === pendingScheduleId)?.date || ''}
+        />
+      )}
     </div>
   );
 }

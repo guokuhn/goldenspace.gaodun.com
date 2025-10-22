@@ -30,21 +30,21 @@ export default function ScheduleSquarePage() {
   }));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
-      <div className="bg-white shadow-md sticky top-0 z-10">
+    <div className="min-h-screen">
+      <div className="bg-white shadow-sm sticky top-0 z-10 border-b border-neutral-200">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
-            <ArrowLeft size={20} className="hover:text-primary-500 transition-colors" />
+          <Link to="/" className="flex items-center space-x-2 text-neutral-600 hover:text-primary-400 transition-colors">
+            <ArrowLeft size={20} />
             <span>返回首页</span>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-800">日程广场</h1>
+          <h1 className="text-2xl font-bold text-neutral-800">日程广场</h1>
           <div className="w-20"></div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* 搜索和筛选 */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+        <div className="bg-white rounded-2xl shadow-sm p-6 mb-8 border border-neutral-200">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div className="md:col-span-4">
               <div className="relative">
@@ -54,57 +54,57 @@ export default function ScheduleSquarePage() {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="搜索用户..."
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                  className="w-full pl-10 pr-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#2790FD] focus:border-primary-400 outline-none"
                 />
               </div>
             </div>
           </div>
 
           <div className="flex items-center space-x-2 mb-3 group">
-            <Filter size={18} className="text-primary-500 group-hover:text-primary-600 transition-colors" />
-            <span className="font-semibold text-gray-700">筛选条件</span>
+            <Filter size={18} className="text-primary-400 group-hover:text-primary-600 transition-colors" />
+            <span className="font-semibold text-neutral-700">筛选条件</span>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">年级</label>
+              <label className="block text-sm font-medium text-neutral-700 mb-2">年级</label>
               <select
                 value={filters.grade}
                 onChange={(e) => setFilters({ ...filters, grade: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#2790FD] focus:border-primary-400 outline-none"
               >
                 <option value="">全部</option>
                 {grades.map(g => <option key={g} value={g}>{g}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">毕业目标</label>
+              <label className="block text-sm font-medium text-neutral-700 mb-2">毕业目标</label>
               <select
                 value={filters.goal}
                 onChange={(e) => setFilters({ ...filters, goal: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#2790FD] focus:border-primary-400 outline-none"
               >
                 <option value="">全部</option>
                 {goals.map(g => <option key={g} value={g}>{g}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">学校</label>
+              <label className="block text-sm font-medium text-neutral-700 mb-2">学校</label>
               <select
                 value={filters.school}
                 onChange={(e) => setFilters({ ...filters, school: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#2790FD] focus:border-primary-400 outline-none"
               >
                 <option value="">全部</option>
                 {schools.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">专业</label>
+              <label className="block text-sm font-medium text-neutral-700 mb-2">专业</label>
               <select
                 value={filters.major}
                 onChange={(e) => setFilters({ ...filters, major: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-[#2790FD] focus:border-primary-400 outline-none"
               >
                 <option value="">全部</option>
                 {majors.map(m => <option key={m} value={m}>{m}</option>)}
@@ -121,28 +121,28 @@ export default function ScheduleSquarePage() {
               to={`/user-schedule/${user.id}`}
               className="block bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:-translate-y-2 transition-all cursor-pointer"
             >
-              <div className="bg-gradient-to-br from-accent-100 to-green-100 p-6">
+              <div className="bg-gradient-to-br from-primary-50 to-white p-6 border-b border-neutral-200">
                 <div className="flex items-start space-x-3">
                   <img 
                     src={user.avatar} 
                     alt={user.name} 
-                    className="w-14 h-14 rounded-full object-cover border-2 border-white"
+                    className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm"
                   />
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                       <div>
-                        <p className="font-bold text-gray-800 text-lg">{user.name}</p>
-                        <p className="text-sm text-gray-600">{user.school}</p>
-                        <p className="text-xs text-gray-500">{user.major} · {user.grade}</p>
+                        <p className="font-bold text-neutral-800 text-lg">{user.name}</p>
+                        <p className="text-sm text-neutral-600">{user.school}</p>
+                        <p className="text-xs text-neutral-500">{user.major} · {user.grade}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2 mt-3">
-                      <span className="bg-primary-100 text-primary-700 text-xs px-2 py-1 rounded">
+                      <span className="bg-primary-100 text-primary-400 text-xs px-2 py-1 rounded font-medium">
                         {user.goal}
                       </span>
-                      <div className="flex items-center space-x-1 bg-white rounded px-2 py-1 group">
-                        <Trophy size={14} className="text-primary-500 group-hover:scale-110 transition-transform duration-300" />
-                        <span className="text-sm font-semibold text-primary-700">{user.points}</span>
+                      <div className="flex items-center space-x-1 bg-white rounded px-2 py-1 shadow-sm group border border-neutral-200">
+                        <Trophy size={14} className="text-primary-400 group-hover:scale-110 transition-transform duration-300" />
+                        <span className="text-sm font-semibold text-primary-400">{user.points}</span>
                       </div>
                     </div>
                   </div>
@@ -150,10 +150,10 @@ export default function ScheduleSquarePage() {
               </div>
               
               <div className="p-4">
-                <p className="text-sm font-semibold text-gray-700 mb-3">本周日程安排</p>
+                <p className="text-sm font-semibold text-neutral-700 mb-3">本周日程安排</p>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs text-gray-600">已完成 {user.weekSchedules - 2}/{user.weekSchedules} 项</span>
-                  <span className="text-xs text-accent-600 font-semibold">
+                  <span className="text-xs text-neutral-600">已完成 {user.weekSchedules - 2}/{user.weekSchedules} 项</span>
+                  <span className="text-xs text-primary-400 font-semibold">
                     {Math.round(((user.weekSchedules - 2) / user.weekSchedules) * 100)}%
                   </span>
                 </div>
@@ -161,13 +161,13 @@ export default function ScheduleSquarePage() {
                   {Array.from({ length: 7 }).map((_, idx) => (
                     <div
                       key={idx}
-                      className={`flex-1 h-8 rounded flex items-center justify-center text-xs ${idx < user.weekSchedules - 2 ? 'bg-accent-500 text-white' : idx < user.weekSchedules ? 'bg-gray-200 text-gray-600' : 'bg-gray-100 text-gray-400'}`}
+                      className={`flex-1 h-6 rounded flex items-center justify-center text-[10px] font-semibold ${idx < user.weekSchedules - 2 ? 'bg-primary-400 text-white' : idx < user.weekSchedules ? 'bg-primary-100 text-primary-400' : 'bg-neutral-200 text-neutral-400'}`}
                     >
                       {idx < user.weekSchedules - 2 ? '✓' : '·'}
                     </div>
                   ))}
                 </div>
-                <div className="w-full mt-4 bg-gradient-to-r from-accent-500 to-green-600 text-white py-2 rounded-lg hover:shadow-lg transition-all text-center">
+                <div className="w-full mt-4 bg-white text-primary-400 py-2 rounded-lg hover:bg-primary-50 transition-all text-center font-medium border border-primary-400">
                   查看详情
                 </div>
               </div>
@@ -182,8 +182,8 @@ export default function ScheduleSquarePage() {
               key={page}
               className={`w-10 h-10 rounded-lg font-semibold transition-all ${
                 page === 1
-                  ? 'bg-gradient-to-r from-accent-500 to-green-600 text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-100'
+                  ? 'bg-primary-400 text-white shadow-md'
+                  : 'bg-white text-neutral-700 hover:bg-primary-50 border border-neutral-200'
               }`}
             >
               {page}

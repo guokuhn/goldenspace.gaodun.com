@@ -16,7 +16,7 @@ export default function LivesPage() {
   const majors = ['计算机', '经济学', '管理学', '法学', '医学', '工程'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
+    <div className="min-h-screen">
       <div className="bg-white shadow-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
@@ -95,10 +95,10 @@ export default function LivesPage() {
               key={live.id}
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transform hover:-translate-y-2 transition-all cursor-pointer relative"
             >
-              <div className="absolute top-3 right-3 z-10 bg-red-500 text-white text-xs px-2 py-1 rounded animate-pulse">
+              <div className="absolute top-3 right-3 z-10 bg-accent text-white text-xs px-2 py-0.5 rounded animate-pulse">
                 直播中
               </div>
-              <div className="w-full aspect-video overflow-hidden relative">
+              <div className="w-full aspect-video overflow-hidden relative transition-transform group-hover:scale-[1.05]">
                 <img 
                   src={live.cover} 
                   alt={live.title} 
@@ -106,27 +106,21 @@ export default function LivesPage() {
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
-                    <Video className="text-accent-600" size={32} />
+                    <Video className="text-accent" size={32} />
                   </div>
                 </div>
               </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2 h-12">{live.title}</h3>
-                <div className="flex items-center space-x-1 text-gray-600 mb-3 group">
-                  <Users size={16} className="text-accent-500 group-hover:text-accent-600 transition-colors" />
-                  <span className="text-sm group-hover:text-accent-600 transition-colors">{live.viewers} 人观看</span>
-                </div>
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {live.tags.map((tag, idx) => (
-                    <span key={idx} className="text-xs bg-accent-100 text-accent-700 px-2 py-1 rounded">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <button className="w-full bg-gradient-to-r from-accent-500 to-green-600 text-white py-2 rounded-lg hover:shadow-lg transition-all">
-                  进入直播间
-                </button>
+              <h3 className="font-semibold module-secondary mb-2 line-clamp-2 h-12">{live.title}</h3>
+              <div className="flex items-center space-x-1 text-gray-600 mb-3 group">                <Users size={16} className="text-accent-500 group-hover:text-accent-600 transition-colors" />
+                <span className="text-sm group-hover:text-accent-600 transition-colors">{live.viewers} 人观看</span>
               </div>
+              <div className="flex flex-wrap gap-1 mb-3">                {live.tags.map((tag, idx) => (
+                  <span key={idx} className="text-xs bg-accent-100 text-accent-700 px-2 py-1 rounded">                    {tag}
+                  </span>
+                ))}
+              </div>
+              <button className="w-full bg-gradient-to-r from-accent-500 to-green-600 text-white py-2 rounded-lg hover:shadow-lg transition-all">                进入直播间
+              </button>
             </div>
           ))}
         </div>

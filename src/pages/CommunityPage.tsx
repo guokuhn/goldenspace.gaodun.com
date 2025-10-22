@@ -20,7 +20,7 @@ export default function CommunityPage() {
   const tags = ['学习打卡', '求职经验', '保研分享', '考研心得', '留学申请', '日常生活'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
+    <div className="min-h-screen">
       <div className="bg-white shadow-md sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-primary-500 transition-colors">
@@ -28,7 +28,7 @@ export default function CommunityPage() {
             <span>返回首页</span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-800">社区</h1>
-          <button className="flex items-center space-x-2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all group">
+          <button className="flex items-center space-x-2 primary-button px-4 py-2 group">
             <Plus size={18} className="transform group-hover:rotate-45 transition-transform duration-300" />
             <span>发布</span>
           </button>
