@@ -73,8 +73,8 @@ const MySchedule = observer(function MySchedule({
 
           const response = await apiService.getTaskList({
               userId: userStore.userId,
-              startTime: startDateFormatted,
-              endTime: endDateFormatted,
+              startDay: startDateFormatted,
+              endDay: endDateFormatted,
           });
 
           if (response.status === 200) {
@@ -247,30 +247,6 @@ const MySchedule = observer(function MySchedule({
                                                 )}
                                             </button>
 
-                                            {/* 图片区域 */}
-                                            {schedule.imageUrl && (
-                                                <div className="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border border-neutral-200 bg-neutral-100">
-                                                    <img
-                                                        src={schedule.imageUrl}
-                                                        alt={schedule.taskName || ''}
-                                                        className="w-full h-full object-cover"
-                                                        onError={(e) => {
-                                                            // 图片加载失败时显示占位符
-                                                            const target =
-                                                                e.target as HTMLImageElement;
-                                                            target.style.display =
-                                                                "none";
-                                                            if (
-                                                                target.parentElement
-                                                            ) {
-                                                                target.parentElement.innerHTML =
-                                                                    '<div class="w-full h-full flex items-center justify-center text-neutral-400 text-xs">📷</div>';
-                                                            }
-                                                        }}
-                                                    />
-                                                </div>
-                                            )}
-
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-start justify-between">
                                                     <p
@@ -292,6 +268,30 @@ const MySchedule = observer(function MySchedule({
                                                     </span>
                                                 </div>
                                             </div>
+
+                                            {/* 图片区域 */}
+                                            {schedule.imageUrl || true && (
+                                                <div className="flex-shrink-0 w-26 h-20 rounded-lg overflow-hidden border border-neutral-200 bg-neutral-100">
+                                                    <img
+                                                        src={schedule.imageUrl || '/images/course1.png'}
+                                                        alt={schedule.taskName || ''}
+                                                        className="w-full h-full object-cover"
+                                                        onError={(e) => {
+                                                            // 图片加载失败时显示占位符
+                                                            const target =
+                                                                e.target as HTMLImageElement;
+                                                            target.style.display =
+                                                                "none";
+                                                            if (
+                                                                target.parentElement
+                                                            ) {
+                                                                target.parentElement.innerHTML =
+                                                                    '<div class="w-full h-full flex items-center justify-center text-neutral-400 text-xs">📷</div>';
+                                                            }
+                                                        }}
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                     );
                                 })}

@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Send, Sparkles, Bot, User as UserIcon } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Send, Sparkles, Bot, User as UserIcon, Volume2, VolumeX } from 'lucide-react';
 import { User } from '../types';
 
 interface DailyReportProps {
@@ -10,6 +10,8 @@ export default function DailyReport({ user }: DailyReportProps) {
   const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     // 初始欢迎语
@@ -37,6 +39,13 @@ export default function DailyReport({ user }: DailyReportProps) {
       }
     }, 1000);
   }, [user]);
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+      setIsMuted(!isMuted);
+    }
+  };
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -72,6 +81,41 @@ export default function DailyReport({ user }: DailyReportProps) {
           <h2 className="text-2xl font-bold text-primary-400">每日报告</h2>
           <p className="text-sm text-neutral-400">AI助理 Golden 为您服务</p>
         </div>
+      </div>
+
+      {/* 学姐视频介绍区域 */}
+      <div 
+        className="relative rounded-xl overflow-hidden mb-4 group shadow-md"
+      >
+        <video
+          ref={videoRef}
+          src="/images/xuejie-video.mp4"
+          className="w-full h-56 object-cover"
+          style={{ objectPosition: 'center -80px' }}
+          loop
+          autoPlay
+          muted={isMuted}
+          playsInline
+        />
+        
+        {/* 视频遮罩和标题 */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-3 pointer-events-none">
+          <div className="text-white">
+            <div className="flex items-center space-x-2 mb-1">
+              <Sparkles size={16} className="text-primary-300 animate-pulse" />
+              <h3 className="text-sm font-semibold">Golden学姐为你提供每日成长报告</h3>
+            </div>
+            {/* <p className="text-xs text-white/90">了解如何高效使用 Golden Space</p> */}
+          </div>
+        </div>
+
+        {/* 音量控制 */}
+        <button
+          onClick={toggleMute}
+          className="absolute top-3 right-3 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-all duration-300 opacity-0 group-hover:opacity-100 z-10"
+        >
+          {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+        </button>
       </div>
 
       <div className="bg-white rounded-xl p-4 mb-4 flex-1 overflow-y-auto space-y-4 scrollbar-hide border border-primary-400">

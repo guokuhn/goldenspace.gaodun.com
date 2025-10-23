@@ -57,9 +57,9 @@ export interface ApiError {
  */
 export interface TaskListRequest {
   /** 开始时间 */
-  startTime: string;
+  startDay: string;
   /** 结束时间 */
-  endTime?: string;
+  endDay?: string;
   /** 用户ID */
   userId?: string;
 }
