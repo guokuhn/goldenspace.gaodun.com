@@ -1,17 +1,25 @@
 import { X, Smartphone } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Schedule } from '../types';
-
+import { observer } from "mobx-react-lite";
+import { TaskResponse } from '../types/api';
+import { userStore } from '../stores/UserStore';
+import { getWeekRange } from '../utils/scheduleGenerator';
 interface SyncScheduleModalProps {
   onClose: () => void;
-  schedules: Schedule[];
+  schedules: TaskResponse[];
 }
 
-export default function SyncScheduleModal({ onClose, schedules }: SyncScheduleModalProps) {
+export default observer(function SyncScheduleModal({ onClose, schedules }: SyncScheduleModalProps) {
   // 生成移动端页面链接 - 显示所有日程
   const getMobilePageUrl = () => {
+    const userId = userStore.userId;
+      // 获取本周的任务（周一到周日）
+      const {
+        startDateFormatted,
+        endDateFormatted,
+    } = getWeekRange(); 
     // 这里我们可以传递所有日程的信息，或者只传递一个标识让H5页面从localStorage读取
-    return `${window.location.origin}/mobile-schedule?mode=all`;
+    return `${window.location.origin}/mobile-schedule?mode=all&userId=${userId}&startTime=${startDateFormatted}&endTime=${endDateFormatted}`;
   };
 
   return (
@@ -63,13 +71,13 @@ export default function SyncScheduleModal({ onClose, schedules }: SyncScheduleMo
                 </div>
                 <div className="bg-primary-50 rounded-xl p-3 text-center">
                   <p className="text-2xl font-bold text-primary-400">
-                    {schedules.filter(s => s.status === 'completed').length}
+                    {schedules.filter(s => s.taskStatus === 1).length}
                   </p>
                   <p className="text-xs text-neutral-500 mt-1">已完成</p>
                 </div>
                 <div className="bg-secondary-50 rounded-xl p-3 text-center">
                   <p className="text-2xl font-bold text-secondary-400">
-                    {schedules.filter(s => s.status === 'pending').length}
+                    {schedules.filter(s => s.taskStatus !== 1).length}
                   </p>
                   <p className="text-xs text-neutral-500 mt-1">待完成</p>
                 </div>
@@ -103,5 +111,5 @@ export default function SyncScheduleModal({ onClose, schedules }: SyncScheduleMo
       </div>
     </div>
   );
-}
+});
 

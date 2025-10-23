@@ -1,25 +1,44 @@
 import { useState, useEffect } from 'react';
-import { X, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
+import { X, Sparkles, Loader2 } from 'lucide-react';
+import { useUserStore } from '../stores';
 
 interface LoginModalProps {
   onClose: () => void;
-  onLogin: (phone: string, name: string) => void;
+  onSuccess?: () => void;
 }
 
-export default function LoginModal({ onClose, onLogin }: LoginModalProps) {
+const LoginModal = observer(({ onClose, onSuccess }: LoginModalProps) => {
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [animateModal, setAnimateModal] = useState(false);
-
+  const userStore = useUserStore();
+  const navigate = useNavigate();
   useEffect(() => {
     // 模态框显示动画
     setAnimateModal(true);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (phone.length === 11 && name.trim()) {
-      onLogin(phone, name);
+      // 调用 userStore 的登录方法
+      const userInfo = await userStore.login(name, phone);
+      
+      if (userInfo) {
+        console.log('userStore.userInfo', userInfo);
+        // 检查用户是否已完成引导（target为空或不存在时跳转到引导页）
+        if (!userInfo.target || userInfo.target.trim() === '') {
+          onClose();
+          navigate('/onboarding', { replace: true });
+          return;
+        }
+        // 登录成功
+        onSuccess?.();
+        onClose();
+      }
+      // 如果失败，错误信息会显示在表单下方
     }
   };
 
@@ -83,12 +102,26 @@ export default function LoginModal({ onClose, onLogin }: LoginModalProps) {
               )}
             </div>
 
+            {/* 错误提示 */}
+            {userStore.error && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                {userStore.error}
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={phone.length !== 11 || !name.trim()}
+              disabled={phone.length !== 11 || !name.trim() || userStore.isLoading}
               className="w-full primary-button py-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              立即登录
+              {userStore.isLoading ? (
+                <>
+                  <Loader2 className="animate-spin" size={20} />
+                  <span>登录中...</span>
+                </>
+              ) : (
+                '立即登录'
+              )}
             </button>
           </form>
 
@@ -99,5 +132,9 @@ export default function LoginModal({ onClose, onLogin }: LoginModalProps) {
       </div>
     </div>
   );
-}
+});
+
+LoginModal.displayName = 'LoginModal';
+
+export default LoginModal;
 

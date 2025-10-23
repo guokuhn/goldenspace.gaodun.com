@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
 import HomePage from './pages/HomePage';
 import ScheduleDetailPage from './pages/ScheduleDetailPage';
 import RankingDetailPage from './pages/RankingDetailPage';
@@ -14,52 +15,50 @@ import OnboardingPage from './pages/OnboardingPage';
 import PointsDetailPage from './pages/PointsDetailPage';
 import MobileSchedulePage from './pages/MobileSchedulePage';
 import LoginModal from './components/LoginModal';
-import { mockUser } from './data/mockData';
 import { User } from './types';
+import { useUserStore } from './stores';
 
-function App() {
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+const App = observer(() => {
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isFirstLogin, setIsFirstLogin] = useState(false);
+  const userStore = useUserStore();
 
-  const handleLogin = (phone: string, name: string) => {
-    // 检查是否是首次登录（这里简单判断，实际应该从后端获取）
-    const existingUser = localStorage.getItem(`user_${phone}`);
-    const isNew = !existingUser;
-    
-    const user = { ...mockUser, phone, name };
-    setCurrentUser(user);
-    setIsLoggedIn(true);
-    setShowLoginModal(false);
-    
-    // 如果是首次登录，跳转到引导页面
-    if (isNew) {
-      setIsFirstLogin(true);
-      navigate('/onboarding');
-    }
-  };
+  // 构造当前用户对象（完全使用 userStore 的真实数据）
+  const currentUser: User | null = userStore.isLoggedIn && userStore.userInfo
+    ? {
+        id: userStore.userInfo.userId,
+        name: userStore.userInfo.nickName,
+        phone: userStore.userInfo.userName,
+        school: userStore.userInfo.school || '',
+        major: userStore.userInfo.major || '',
+        grade: userStore.userInfo.grade || '',
+        goal: (userStore.userInfo.target as User['goal']) || '普通就业',
+        points: 0, // 积分初始值，后续可从后端获取
+        avatar: userStore.userInfo.nickName.charAt(0), // 使用昵称首字符作为默认头像
+      }
+    : null;
 
-  const handleUpdateUser = (userData: Partial<User>) => {
-    if (currentUser) {
-      const updatedUser = { ...currentUser, ...userData };
-      setCurrentUser(updatedUser);
-      // 保存到localStorage标记用户已完成设置
-      localStorage.setItem(`user_${updatedUser.phone}`, JSON.stringify(updatedUser));
-      setIsFirstLogin(false);
-    }
-  };
-
+  // 处理用户登出
   const handleLogout = () => {
-    // 清除用户状态
-    setIsLoggedIn(false);
-    setCurrentUser(null);
-    setIsFirstLogin(false);
-    // 可选：清除相关的localStorage数据
-    // localStorage.removeItem('userSchedules');
-    // localStorage.removeItem('recommendedCourses');
-    // localStorage.removeItem('recommendedLives');
+    userStore.logout();
+  };
+
+  // 处理用户信息更新
+  const handleUpdateUser = async (userData: {
+    grade: string;
+    major: string;
+    school: string;
+    goal: string;
+  }): Promise<boolean> => {
+    if (userStore.isLoggedIn) {
+      // 调用 UserStore 的方法更新用户信息
+      return await userStore.updateUserProfile({
+        grade: userData.grade,
+        major: userData.major,
+        school: userData.school,
+        target: userData.goal, // 注意：这里 goal 映射到 target
+      });
+    }
+    return false;
   };
 
   return (
@@ -69,7 +68,7 @@ function App() {
           path="/" 
           element={
             <HomePage 
-              isLoggedIn={isLoggedIn}
+              isLoggedIn={userStore.isLoggedIn}
               user={currentUser}
               onLoginClick={() => setShowLoginModal(true)}
               onLogout={handleLogout}
@@ -101,12 +100,14 @@ function App() {
       {showLoginModal && (
         <LoginModal
           onClose={() => setShowLoginModal(false)}
-          onLogin={handleLogin}
+          onSuccess={() => {
+            console.log('登录成功！用户信息:', userStore.userInfo);
+          }}
         />
       )}
     </>
   );
-}
+});
 
 export default App;
 

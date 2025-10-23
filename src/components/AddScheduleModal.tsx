@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import { X, Calendar, FileText } from 'lucide-react';
+import { observer } from 'mobx-react-lite';
+import { userStore } from '../stores/UserStore';
+import { apiService } from '../services/api';
 
 interface AddScheduleModalProps {
   onClose: () => void;
-  onAdd: (schedule: {
-    title: string;
-    description: string;
-    date: string;
-  }) => void;
+  onAdd: () => void;
   selectedDate?: string;
 }
 
-export default function AddScheduleModal({ onClose, onAdd, selectedDate }: AddScheduleModalProps) {
+const AddScheduleModal = observer(({ onClose, onAdd, selectedDate }: AddScheduleModalProps) => {
   const today = new Date().toISOString().split('T')[0];
   
   const [formData, setFormData] = useState({
@@ -21,8 +20,9 @@ export default function AddScheduleModal({ onClose, onAdd, selectedDate }: AddSc
   });
 
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // 验证表单
@@ -42,14 +42,36 @@ export default function AddScheduleModal({ onClose, onAdd, selectedDate }: AddSc
       return;
     }
 
-    // 提交数据
-    onAdd({
-      title: formData.title,
-      description: formData.description,
-      date: formData.date
-    });
-    
-    onClose();
+    // 检查用户是否登录
+    if (!userStore.userId) {
+      setErrors({ submit: '请先登录' });
+      return;
+    }
+
+    // 调用创建任务 API
+    setIsSubmitting(true);
+    try {
+      const response = await apiService.createTask({
+        taskDate: formData.date,
+        taskName: formData.title,
+        taskDesc: formData.description,
+        userId: userStore.userId
+      });
+
+      console.log('创建任务成功:', response);
+
+      // 提交数据
+      onAdd();
+      
+      onClose();
+    } catch (error: any) {
+      console.error('创建任务失败:', error);
+      setErrors({ 
+        submit: error?.response?.data?.message || error?.message || '创建失败，请重试' 
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (field: string, value: string | number) => {
@@ -148,25 +170,37 @@ export default function AddScheduleModal({ onClose, onAdd, selectedDate }: AddSc
             </p>
           </div>
 
-            {/* 按钮组 */}
-            <div className="flex space-x-3 pt-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="flex-1 px-6 py-3 border border-neutral-300 text-neutral-700 rounded-xl hover:bg-neutral-50 transition-all font-semibold"
-              >
-                取消
-              </button>
-              <button
-                type="submit"
-                className="flex-1 px-6 py-3 bg-primary-400 hover:bg-primary-500 text-white rounded-xl transition-all font-semibold shadow-md hover:shadow-lg transform hover:scale-105"
-              >
-                确认添加
-              </button>
+          {/* 错误提示 */}
+          {errors.submit && (
+            <div className="bg-secondary-50 border border-secondary-200 rounded-xl p-4">
+              <p className="text-sm text-secondary-600">{errors.submit}</p>
             </div>
+          )}
+
+          {/* 按钮组 */}
+          <div className="flex space-x-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isSubmitting}
+              className="flex-1 px-6 py-3 border border-neutral-300 text-neutral-700 rounded-xl hover:bg-neutral-50 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              取消
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex-1 px-6 py-3 bg-primary-400 hover:bg-primary-500 text-white rounded-xl transition-all font-semibold shadow-md hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {isSubmitting ? '创建中...' : '确认添加'}
+            </button>
+          </div>
         </form>
       </div>
     </div>
   );
-}
+});
 
+AddScheduleModal.displayName = 'AddScheduleModal';
+
+export default AddScheduleModal;

@@ -7,6 +7,50 @@ interface UserProfile {
   studyHoursPerDay: number;
 }
 
+/**
+ * 获取本周的开始日期（周一）和结束日期（周日）
+ * @param date 可选，指定日期，默认为当前日期
+ * @returns { startDate: Date, endDate: Date, startDateStr: string, endDateStr: string }
+ */
+export const getWeekRange = (date: Date = new Date()) => {
+  const current = new Date(date);
+  
+  // 获取当前是星期几（0=周日, 1=周一, ..., 6=周六）
+  const dayOfWeek = current.getDay();
+  
+  // 计算到周一的偏移量
+  // 如果是周日(0)，则偏移量为-6；否则为1-dayOfWeek
+  const offsetToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  
+  // 计算周一日期
+  const monday = new Date(current);
+  monday.setDate(current.getDate() + offsetToMonday);
+  monday.setHours(0, 0, 0, 0);
+  
+  // 计算周日日期（周一 + 6天）
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  sunday.setHours(23, 59, 59, 999);
+  
+  // 格式化日期为 YYYY-MM-DD（本地时间）
+  const formatLocalDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
+  return {
+    startDate: monday,
+    endDate: sunday,
+    startDateStr: monday.toISOString(),
+    endDateStr: sunday.toISOString(),
+    // 使用本地时间格式化
+    startDateFormatted: formatLocalDate(monday),
+    endDateFormatted: formatLocalDate(sunday),
+  };
+};
+
 // 根据用户目标生成推荐的学习内容
 const getRecommendedTasks = (goal: string, interests: string[]): string[] => {
   const tasksByGoal: Record<string, string[]> = {

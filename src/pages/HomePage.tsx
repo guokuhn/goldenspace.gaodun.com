@@ -75,7 +75,7 @@ export default function HomePage({ isLoggedIn, user, onLoginClick, onLogout }: H
       {/* 页脚 */}
       <footer className="bg-gradient-to-r from-neutral-50 to-primary-50 border-t border-accent/10 py-8 mt-12">
         <div className="container mx-auto px-4 text-center">
-          <p className="mb-2 text-gradient font-medium">© 2024 Golden Space - 大学生成长云空间</p>
+          <p className="mb-2 text-gradient font-medium">© 2025 Golden Space - 大学生学习成长云空间</p>
           <p className="text-sm text-primary-600">百万公益基金 · 助你成为更好的自己</p>
         </div>
       </footer>

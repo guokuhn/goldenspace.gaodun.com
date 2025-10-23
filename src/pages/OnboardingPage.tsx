@@ -6,7 +6,12 @@ import { generatePersonalizedSchedule, getRecommendedCourses, getRecommendedLive
 
 interface OnboardingPageProps {
   user: User | null;
-  onUpdateUser: (userData: Partial<User>) => void;
+  onUpdateUser: (userData: {
+    grade: string;
+    major: string;
+    school: string;
+    goal: string;
+  }) => Promise<boolean>;
 }
 
 export default function OnboardingPage({ user, onUpdateUser }: OnboardingPageProps) {
@@ -35,38 +40,49 @@ export default function OnboardingPage({ user, onUpdateUser }: OnboardingPagePro
     }
   };
 
-  const handleComplete = () => {
-    // 更新用户信息
-    onUpdateUser({
-      school: formData.school,
-      major: formData.major,
-      grade: formData.grade,
-      goal: formData.goal
-    });
+  const handleComplete = async () => {
+    try {
+      // 调用后端接口更新用户信息
+      const success = await onUpdateUser({
+        school: formData.school,
+        major: formData.major,
+        grade: formData.grade,
+        goal: formData.goal
+      });
 
-    // 生成个性化日程计划
-    const schedules = generatePersonalizedSchedule({
-      grade: formData.grade,
-      goal: formData.goal,
-      interests: [],
-      studyHoursPerDay: 3
-    });
+      if (!success) {
+        // 如果更新失败，可以显示错误提示
+        alert('更新用户信息失败，请重试');
+        return;
+      }
 
-    // 保存日程到localStorage（实际应该保存到后端）
-    localStorage.setItem('userSchedules', JSON.stringify(schedules));
+      // 生成个性化日程计划
+      const schedules = generatePersonalizedSchedule({
+        grade: formData.grade,
+        goal: formData.goal,
+        interests: [],
+        studyHoursPerDay: 3
+      });
 
-    // 获取推荐内容
-    const recommendedCourses = getRecommendedCourses(formData.goal);
-    const recommendedLives = getRecommendedLives([]);
-    
-    // 保存推荐内容
-    localStorage.setItem('recommendedCourses', JSON.stringify(recommendedCourses));
-    localStorage.setItem('recommendedLives', JSON.stringify(recommendedLives));
+      // 保存日程到localStorage（实际应该保存到后端）
+      localStorage.setItem('userSchedules', JSON.stringify(schedules));
 
-    // 显示成功提示并跳转到首页
-    setTimeout(() => {
-      navigate('/');
-    }, 500);
+      // 获取推荐内容
+      const recommendedCourses = getRecommendedCourses(formData.goal);
+      const recommendedLives = getRecommendedLives([]);
+      
+      // 保存推荐内容
+      localStorage.setItem('recommendedCourses', JSON.stringify(recommendedCourses));
+      localStorage.setItem('recommendedLives', JSON.stringify(recommendedLives));
+
+      // 显示成功提示并跳转到首页
+      setTimeout(() => {
+        navigate('/');
+      }, 500);
+    } catch (error) {
+      console.error('完成设置失败:', error);
+      alert('设置失败，请重试');
+    }
   };
 
   const grades = ['大一', '大二', '大三', '大四', '研一', '研二', '研三'];
