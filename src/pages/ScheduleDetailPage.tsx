@@ -651,7 +651,7 @@ function PlanSetupModal({
             try {
                 setSubmitting(true);
 
-                // 显示页面loading
+                // 显示页面loading - 在关闭模态框之前
                 if (setPageLoading) {
                     setPageLoading(true);
                 }
@@ -682,46 +682,44 @@ function PlanSetupModal({
                 // 关闭模态框
                 onClose();
 
-                // 延迟2秒后开始轮询检查列表数据
-                setTimeout(() => {
-                    // 开始轮询检查列表是否有数据
-                    const pollInterval = setInterval(async () => {
-                        try {
-                            const response = await apiService.getTaskList({
-                                startDay: startDate || "",
-                                endDay: endDate || "",
-                                userId: userId,
-                            });
+                // 立即开始轮询检查列表数据（移除2秒延迟）
+                const pollInterval = setInterval(async () => {
+                    try {
+                        const response = await apiService.getTaskList({
+                            startDay: startDate || "",
+                            endDay: endDate || "",
+                            userId: userId,
+                        });
 
-                            // 如果有数据,停止轮询
-                            if (response.result && response.result.length > 0) {
-                                clearInterval(pollInterval);
-                                console.log("日程数据已生成");
-                                // 隐藏页面loading
-                                if (setPageLoading) {
-                                    setPageLoading(false);
-                                }
-                                alert("日程计划已生成！");
-                                // 调用 onSuccess 更新界面
-                                if (onSuccess) {
-                                    onSuccess();
-                                }
+                        // 如果有数据,停止轮询
+                        if (response.result && response.result.length > 0) {
+                            clearInterval(pollInterval);
+                            console.log("日程数据已生成");
+                            // 隐藏页面loading
+                            if (setPageLoading) {
+                                setPageLoading(false);
                             }
-                        } catch (error) {
-                            console.error("轮询日程数据失败:", error);
+                            alert("日程计划已生成！");
+                            // 调用 onSuccess 更新界面
+                            if (onSuccess) {
+                                onSuccess();
+                            }
                         }
-                    }, 3000); // 每3秒轮询一次
+                    } catch (error) {
+                        console.error("轮询日程数据失败:", error);
+                    }
+                }, 3000); // 每3秒轮询一次
 
-                    // 设置最大轮询时间(60秒),避免无限轮询
-                    setTimeout(() => {
-                        clearInterval(pollInterval);
-                        // 隐藏页面loading
-                        if (setPageLoading) {
-                            setPageLoading(false);
-                        }
-                        console.log("停止轮询");
-                    }, 60000);
-                }, 2000);
+                // 设置最大轮询时间(60秒),避免无限轮询
+                setTimeout(() => {
+                    clearInterval(pollInterval);
+                    // 隐藏页面loading
+                    if (setPageLoading) {
+                        setPageLoading(false);
+                    }
+                    console.log("停止轮询 - 已超时");
+                    alert("生成计划时间较长，请稍后刷新页面查看");
+                }, 60000);
             } catch (error) {
                 console.error("更新用户信息失败:", error);
                 alert("更新用户信息失败，请重试");

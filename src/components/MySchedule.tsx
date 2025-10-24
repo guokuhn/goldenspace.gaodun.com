@@ -69,7 +69,6 @@ const MySchedule = observer(function MySchedule({
       }
 
       console.log("✅ 开始加载任务列表...");
-      setIsLoading(true);
       try {
           // 获取本周的任务（周一到周日）
           const {
@@ -85,41 +84,53 @@ const MySchedule = observer(function MySchedule({
 
           if (response.status === 200) {
               setSchedules(response.result || []);
+              // 只有当成功获取到数据时才关闭loading
+              if (response.result && response.result.length > 0) {
+                  setIsLoading(false);
+              }
           } else {
               console.error("❌ 获取任务列表失败:", response.message);
           }
       } catch (error) {
           console.error("❌ 获取任务列表失败:", error);
-      } finally {
-          setIsLoading(false);
       }
     };
 
     // 加载用户的个性化日程
     useEffect(() => {
-        fetchTasks();
+        if (isLoggedIn && userStore.userId) {
+            setIsLoading(true);
+            fetchTasks();
+        }
     }, [isLoggedIn, userStore.userId]);
 
-    // 轮询逻辑：当列表为空时每2秒请求一次
+    // 轮询逻辑：当列表为空时每3秒请求一次，最多轮询60秒
     useEffect(() => {
-        if (!isLoggedIn || !userStore.userId) {
+        if (!isLoggedIn || !userStore.userId || schedules.length > 0) {
             return;
         }
 
-        // 如果列表为空，开始轮询
-        if (schedules.length === 0 && !isLoading) {
-            const pollingInterval = setInterval(() => {
-                console.log("📡 列表为空，执行轮询请求...");
-                fetchTasks();
-            }, 2000); // 每2秒轮询一次
+        // 开始轮询
+        console.log("📡 开始轮询任务列表...");
+        const pollingInterval = setInterval(() => {
+            console.log("📡 列表为空，执行轮询请求...");
+            fetchTasks();
+        }, 3000); // 每3秒轮询一次
 
-            // 清理定时器
-            return () => {
-                console.log("🛑 停止轮询");
-                clearInterval(pollingInterval);
-            };
-        }
-    }, [schedules.length, isLoggedIn, userStore.userId, isLoading]);
+        // 设置最大轮询时间60秒
+        const maxPollingTimeout = setTimeout(() => {
+            console.log("🛑 轮询超时，停止轮询");
+            clearInterval(pollingInterval);
+            setIsLoading(false);
+        }, 60000);
+
+        // 清理定时器
+        return () => {
+            console.log("🛑 停止轮询");
+            clearInterval(pollingInterval);
+            clearTimeout(maxPollingTimeout);
+        };
+    }, [schedules.length, isLoggedIn, userStore.userId]);
 
     const toggleComplete = async (id: number) => {
         const schedule = schedules.find((s) => s.id === id);
@@ -327,30 +338,6 @@ const MySchedule = observer(function MySchedule({
                                                     />
                                                 </button>
                                             )}
-
-                                            {/* 图片区域 */}
-                                            {/* {schedule.imageUrl && (
-                                                <div className="flex-shrink-0 w-26 h-20 rounded-lg overflow-hidden border border-neutral-200 bg-neutral-100">
-                                                    <img
-                                                        src={schedule.imageUrl || '/images/course1.png'}
-                                                        alt={schedule.taskName || ''}
-                                                        className="w-full h-full object-cover"
-                                                        onError={(e) => {
-                                                            // 图片加载失败时显示占位符
-                                                            const target =
-                                                                e.target as HTMLImageElement;
-                                                            target.style.display =
-                                                                "none";
-                                                            if (
-                                                                target.parentElement
-                                                            ) {
-                                                                target.parentElement.innerHTML =
-                                                                    '<div class="w-full h-full flex items-center justify-center text-neutral-400 text-xs">📷</div>';
-                                                            }
-                                                        }}
-                                                    />
-                                                </div>
-                                            )} */}
                                         </div>
                                     );
                                 })}
