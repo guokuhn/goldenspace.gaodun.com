@@ -25,75 +25,75 @@ const getDateOffset = (days: number) => {
 };
 
 export const mockSchedules: Schedule[] = [
-  { 
-    id: '1', 
+  {
+    id: '1',
     date: getDateOffset(-4), // 4天前
     time: '09:00',
-    title: '完成高等数学作业', 
-    status: 'completed', 
-    description: '第五章习题', 
-    points: 10 
+    title: '完成高等数学作业',
+    status: 'completed',
+    description: '第五章习题',
+    points: 10
   },
-  { 
-    id: '2', 
+  {
+    id: '2',
     date: getDateOffset(-3), // 3天前（延迟未完成，需要拉新）
     time: '14:00',
-    title: '参加英语四级模拟考试', 
-    status: 'pending', 
-    description: '提前准备答题卡', 
+    title: '参加英语四级模拟考试',
+    status: 'pending',
+    description: '提前准备答题卡',
     points: 20,
     image: '/images/golden-space-cover-1.png',
     link: '/courses'
   },
-  { 
-    id: '3', 
+  {
+    id: '3',
     date: getDateOffset(-2), // 2天前（延迟未完成，需要拉新）
     time: '19:00',
-    title: '观看Python编程课程', 
-    status: 'pending', 
-    description: '第10-12章', 
+    title: '观看Python编程课程',
+    status: 'pending',
+    description: '第10-12章',
     points: 15,
     image: '/images/golden-space-cover-2.png',
     link: '/courses'
   },
-  { 
-    id: '4', 
+  {
+    id: '4',
     date: getDateOffset(-1), // 昨天（延迟未完成，需要拉新）
     time: '10:00',
-    title: '整理专业课笔记', 
-    status: 'pending', 
-    description: '数据结构与算法', 
+    title: '整理专业课笔记',
+    status: 'pending',
+    description: '数据结构与算法',
     points: 10,
     image: '/images/golden-space-cover-3.png'
   },
-  { 
-    id: '6', 
+  {
+    id: '6',
     date: '2024-10-21', // 固定日期21号（用于测试延迟标记）
     time: '16:00',
-    title: '完成数据库实验报告', 
-    status: 'pending', 
-    description: 'SQL查询优化实验', 
+    title: '完成数据库实验报告',
+    status: 'pending',
+    description: 'SQL查询优化实验',
     points: 15,
     image: '/images/golden-space-cover-5.png',
     link: '/courses'
   },
-  { 
-    id: '7', 
+  {
+    id: '7',
     date: getTodayDate(), // 今天（可直接完成）
     time: '14:00',
-    title: '复习计算机网络课程', 
-    status: 'pending', 
-    description: '第三章TCP/IP协议', 
+    title: '复习计算机网络课程',
+    status: 'pending',
+    description: '第三章TCP/IP协议',
     points: 12,
     image: '/images/golden-space-cover-1.png'
   },
-  { 
-    id: '5', 
+  {
+    id: '5',
     date: getDateOffset(1), // 明天（不能提前完成）
     time: '15:30',
-    title: '参加学术讲座', 
-    status: 'pending', 
-    description: 'AI发展趋势', 
+    title: '参加学术讲座',
+    status: 'pending',
+    description: 'AI发展趋势',
     points: 25,
     image: '/images/golden-space-cover-4.png',
     link: '/lives'
@@ -108,43 +108,43 @@ export const allUserNames = [
   '英语晨读材料库小宇', '考证报名提醒阿萌', '自习室学习搭子阿哲', '小组作业灵感库阿雯',
   '考研数学公式本小航', 'CET6翻译素材阿蕊', '早八课笔记补完小博', '图书馆闭馆路线阿彤',
   '期末复习错题本小阳', '论文致谢模板阿沁', 'GPA目标进度条小轩', '背单词打卡日历阿玲',
-  
+
   // 排行榜详情页扩展（21-30）
   '专业课重点整理小明', '英语口语练习阿婷', '考研政治速记小刚', '数据分析笔记阿洁',
   '算法刷题记录小鹏', '雅思备考攻略阿敏', '托福高分经验小华', '保研经验分享阿悦',
   '竞赛获奖心得小龙', '项目实战总结阿晴',
-  
+
   // 活动模块-圈人奖励（31-40）
   '考研英语作文课阿昊', '考证模拟考试卷阿珊', '自习室灯光调整小峰', '小组作业分工表阿静',
   '考研政治知识点阿萱', '高数解题思路库阿妮', '英语阅读提分术小凯', '考证真题解析师阿雅',
   '自习室零食分享小斌', '论文写作指南阿薇',
-  
+
   // 活动模块-PK挑战（41-50）
   '编程竞赛冲刺阿杰', '数学建模笔记小文', '英语演讲训练阿芳', '算法竞赛进阶小松',
   '考研专业课笔记小涵', '英语写作提分术阿欣', '考证刷题百题斩小瑞', '期末复习划重点阿舒',
   '笔记配色小天才小颖', '图书馆闭馆选手阿霖',
-  
+
   // PK活动详情页扩展（51-70）
   '早八咖啡配学习小思', '背单词到凌晨阿萍', '高数网课追更中小军', '考研复试准备中阿慧',
   '四级备考攻略小宏', '六级听力技巧阿娟', '专四专八经验小飞', '托业考试指南阿兰',
   '雅思写作模板小威', '托福口语练习阿婵', '保研夏令营攻略小东', '推免面试技巧阿琪',
   '考研调剂经验小亮', '复试英语准备阿璐', '科研论文写作小超', '学术会议分享阿娜',
   '竞赛准备心得小豪', '项目答辩技巧阿梅', '创新创业经验小勇', '实习求职攻略阿丽',
-  
+
   // 推荐活动详情页扩展（71-90）
   '校园兼职分享小涛', '社团活动组织阿君', '志愿服务经历小芬', '社会实践总结阿英',
   '学生会工作心得小杰', '班级管理经验阿红', '宿舍学习氛围小磊', '图书馆占座技巧阿萍',
   '自习室推荐榜单小林', '考试周备考攻略阿芝', '选课策略分享小浩', '课程评价汇总阿秋',
   '教授推荐信攻略小晨', '奖学金申请心得阿雪', '助学金经验分享小康', '勤工俭学建议阿夏',
   '时间管理方法小翔', '学习效率提升阿云', '笔记方法总结小波', '思维导图应用阿丹',
-  
+
   // 日程广场（91-110）
   '番茄工作法实践小韬', '早起打卡挑战阿月', '运动健身计划小峻', '健康饮食分享阿蓉',
   '心理调节方法小斌', '压力管理技巧阿欢', '睡眠质量改善小帆', '自我激励方法阿媛',
   '目标设定经验小俊', '习惯养成记录阿灵', '读书笔记分享小锋', '电影观后感汇总阿彬',
   '音乐推荐清单小洋', '旅行游记分享阿莎', '美食探店记录小宸', '摄影技巧学习阿珍',
   '绘画练习日记小昕', '书法临摹心得阿倩', '手工制作教程小澄', '编程项目实战阿筠',
-  
+
   // 社区模块（111-120）
   '软件开发经验小泽', '前端框架学习阿瑶', '后端技术探索小齐', '数据库优化技巧阿茜',
   '网络安全知识小恒', '人工智能入门阿岚', '机器学习实践小晖', '深度学习笔记阿珺',
@@ -198,15 +198,31 @@ export const mockPKRankings: RankUser[] = Array.from({ length: 30 }, (_, i) => (
 
 // 公益课程封面图库 - 5张金色云空间主题图片
 export const courseCoverImages = [
-  '/images/golden-space-cover-1.png', // 蓝色背景，金色云空间主题
-  '/images/golden-space-cover-2.png', // 红色背景，金色云空间主题
-  '/images/golden-space-cover-3.png', // 绿色到橙色渐变背景，金色云空间主题
-  '/images/golden-space-cover-4.png', // 黄色到紫色渐变背景，金色云空间主题
-  '/images/golden-space-cover-5.png'  // 蓝色到粉色渐变背景，金色云空间主题
+  '/images/course/course1.png', // 蓝色背景，金色云空间主题
+  '/images/course/course2.png', // 红色背景，金色云空间主题
+  '/images/course/course3.png', // 绿色到橙色渐变背景，金色云空间主题
+  '/images/course/course4.png', // 黄色到紫色渐变背景，金色云空间主题
+  '/images/course/course5.png',  // 蓝色到粉色渐变背景，金色云空间主题
+  '/images/course/course6.png', // 蓝色到粉色渐变背景，金色云空间主题
+  '/images/course/course7.png', // 蓝色到粉色渐变背景，金色云空间主题
+  '/images/course/course8.png', // 蓝色到粉色渐变背景，金色云空间主题
+  '/images/course/course9.png', // 蓝色到粉色渐变背景，金色云空间主题
+  '/images/course/course10.png', // 蓝色到粉色渐变背景，金色云空间主题
+];
+
+// 直播封面
+export const liveCoverImages = [
+  '/images/live/live1.png', // 蓝色背景，金色云空间主题
+  '/images/live/live2.png', // 红色背景，金色云空间主题
+  '/images/live/live3.png', // 绿色到橙色渐变背景，金色云空间主题
+  '/images/live/live4.png', // 黄色到紫色渐变背景，金色云空间主题
+  '/images/live/live5.png'  // 蓝色到粉色渐变背景，金色云空间主题
 ];
 
 // 随机选择封面图片的辅助函数
 const getRandomCover = () => courseCoverImages[Math.floor(Math.random() * courseCoverImages.length)];
+const getRandomLiveCover = () => liveCoverImages[Math.floor(Math.random() * liveCoverImages.length)];
+
 
 export const mockCourses: Course[] = [
   { id: 'course-1', title: '大学四年职业规划全攻略：从新生到职场精英', cover: getRandomCover(), tags: ['职业规划', '职场入门'], goal: ['普通就业'], major: ['计算机', '经济学', '管理学'] },
@@ -228,16 +244,16 @@ export const mockCourses: Course[] = [
 
 // 公益直播也使用随机封面图片
 export const mockLives: Live[] = [
-  { id: 'live-1', title: '清华大学学长分享：从双非到985保研成功之路', cover: getRandomCover(), viewers: 1200, tags: ['保研', '经验分享'], goal: ['保研'], major: ['计算机', '数学'] },
-  { id: 'live-2', title: '考研数学满分经验：如何高效备考数学科目', cover: getRandomCover(), viewers: 1500, tags: ['考研', '数学'], goal: ['考研'], major: ['计算机', '数学'] },
-  { id: 'live-3', title: '公务员上岸经验：行测80+高分技巧分享', cover: getRandomCover(), viewers: 1800, tags: ['考公', '行测'], goal: ['体制内就业'], major: ['计算机', '经济学'] },
-  { id: 'live-4', title: '美国藤校留学申请：如何打造竞争力强的申请材料', cover: getRandomCover(), viewers: 1300, tags: ['留学', '美国'], goal: ['留学'], major: ['计算机', '经济学'] },
-  { id: 'live-5', title: '研究生复试全攻略：面试常见问题与应对策略', cover: getRandomCover(), viewers: 1600, tags: ['考研', '复试'], goal: ['考研'], major: ['计算机', '数学'] },
-  { id: 'live-6', title: '科研竞赛经验：如何从0到1开展科研项目', cover: getRandomCover(), viewers: 1100, tags: ['科研', '竞赛'], goal: ['保研', '考研'], major: ['计算机', '数学'] },
-  { id: 'live-7', title: '英国G5申请经验：雅思备考与文书写作技巧', cover: getRandomCover(), viewers: 1400, tags: ['留学', '英国'], goal: ['留学'], major: ['计算机', '管理学'] },
-  { id: 'live-8', title: '国考申论高分模板：如何写出让考官眼前一亮的文章', cover: getRandomCover(), viewers: 1700, tags: ['考公', '申论'], goal: ['体制内就业'], major: ['计算机', '经济学'] },
-  { id: 'live-9', title: '互联网大厂求职：技术面试通关技巧与项目准备', cover: getRandomCover(), viewers: 1900, tags: ['求职', '互联网'], goal: ['普通就业'], major: ['计算机'] },
-  { id: 'live-10', title: '留学签证申请指南：面签准备与常见问题解答', cover: getRandomCover(), viewers: 1250, tags: ['留学', '签证'], goal: ['留学'], major: ['计算机', '经济学', '管理学'] }
+  { id: 'live-1', title: '清华大学学长分享：从双非到985保研成功之路', cover: getRandomLiveCover(), viewers: 1200, tags: ['保研', '经验分享'], goal: ['保研'], major: ['计算机', '数学'] },
+  { id: 'live-2', title: '考研数学满分经验：如何高效备考数学科目', cover: getRandomLiveCover(), viewers: 1500, tags: ['考研', '数学'], goal: ['考研'], major: ['计算机', '数学'] },
+  { id: 'live-3', title: '公务员上岸经验：行测80+高分技巧分享', cover: getRandomLiveCover(), viewers: 1800, tags: ['考公', '行测'], goal: ['体制内就业'], major: ['计算机', '经济学'] },
+  { id: 'live-4', title: '美国藤校留学申请：如何打造竞争力强的申请材料', cover: getRandomLiveCover(), viewers: 1300, tags: ['留学', '美国'], goal: ['留学'], major: ['计算机', '经济学'] },
+  { id: 'live-5', title: '研究生复试全攻略：面试常见问题与应对策略', cover: getRandomLiveCover(), viewers: 1600, tags: ['考研', '复试'], goal: ['考研'], major: ['计算机', '数学'] },
+  { id: 'live-6', title: '科研竞赛经验：如何从0到1开展科研项目', cover: getRandomLiveCover(), viewers: 1100, tags: ['科研', '竞赛'], goal: ['保研', '考研'], major: ['计算机', '数学'] },
+  { id: 'live-7', title: '英国G5申请经验：雅思备考与文书写作技巧', cover: getRandomLiveCover(), viewers: 1400, tags: ['留学', '英国'], goal: ['留学'], major: ['计算机', '管理学'] },
+  { id: 'live-8', title: '国考申论高分模板：如何写出让考官眼前一亮的文章', cover: getRandomLiveCover(), viewers: 1700, tags: ['考公', '申论'], goal: ['体制内就业'], major: ['计算机', '经济学'] },
+  { id: 'live-9', title: '互联网大厂求职：技术面试通关技巧与项目准备', cover: getRandomLiveCover(), viewers: 1900, tags: ['求职', '互联网'], goal: ['普通就业'], major: ['计算机'] },
+  { id: 'live-10', title: '留学签证申请指南：面签准备与常见问题解答', cover: getRandomLiveCover(), viewers: 1250, tags: ['留学', '签证'], goal: ['留学'], major: ['计算机', '经济学', '管理学'] }
 ];
 
 // 生成不同用户的日程数据
@@ -254,7 +270,7 @@ export const generateUserSchedules = (userId: string) => {
     '撰写学术论文',
     '参加社团活动'
   ];
-  
+
   const descriptions = [
     '第五章习题',
     'CET-4核心词汇',
@@ -267,19 +283,19 @@ export const generateUserSchedules = (userId: string) => {
     '毕业论文初稿',
     '学生会会议'
   ];
-  
+
   // 根据userId生成不同的随机种子
   const seed = parseInt(userId.replace(/\D/g, '')) || 1;
-  
+
   return Array.from({ length: 5 }, (_, i) => {
     const date = new Date();
     date.setDate(date.getDate() + i);
     const formattedDate = date.toISOString().split('T')[0];
-    
+
     // 使用种子确保不同用户的日程内容有所差异
     const titleIndex = (seed + i) % scheduleTitles.length;
     const descIndex = (seed + i + 2) % descriptions.length;
-    
+
     return {
       id: `${userId}-schedule-${i + 1}`,
       date: formattedDate,
@@ -344,7 +360,7 @@ export const mockPosts: Post[] = Array.from({ length: 50 }, (_, i) => {
     `刷了一天的力扣，终于把二叉树专题全部做完了！#力扣 #算法`,
     `今天学习了Git的高级用法，理解了rebase和merge的区别~ #Git #版本控制`,
   ];
-  
+
   // 计算发布时间，让时间更真实
   let publishTime;
   if (i < 5) {
@@ -356,7 +372,7 @@ export const mockPosts: Post[] = Array.from({ length: 50 }, (_, i) => {
   } else {
     publishTime = `${i - 28}天前`;
   }
-  
+
   return {
     id: `post-${i + 1}`,
     author: communityUserNames[i % communityUserNames.length],
