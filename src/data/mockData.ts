@@ -203,11 +203,6 @@ export const courseCoverImages = [
   '/images/course/course3.png', // 绿色到橙色渐变背景，金色云空间主题
   '/images/course/course4.png', // 黄色到紫色渐变背景，金色云空间主题
   '/images/course/course5.png',  // 蓝色到粉色渐变背景，金色云空间主题
-  '/images/course/course6.png', // 蓝色到粉色渐变背景，金色云空间主题
-  '/images/course/course7.png', // 蓝色到粉色渐变背景，金色云空间主题
-  '/images/course/course8.png', // 蓝色到粉色渐变背景，金色云空间主题
-  '/images/course/course9.png', // 蓝色到粉色渐变背景，金色云空间主题
-  '/images/course/course10.png', // 蓝色到粉色渐变背景，金色云空间主题
 ];
 
 // 直播封面

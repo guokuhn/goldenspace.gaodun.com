@@ -30,7 +30,7 @@ const ContentModal = ({ onClose, title = 'Hi，我来帮你解惑了～', update
                 setIsLoading(true);
                 setError(null);
                 controllerRef.current = new AbortController();
-                const response = await fetch(`https://gtech19.gaodun.com/api/v1/task/create-task-ai-detail?taskId=112`, {
+                const response = await fetch(`https://gtech19.gaodun.com/api/v1/task/create-task-ai-detail?taskId=${taskId}`, {
                     method: 'GET',
                     headers: {
                         'Accept': 'text/event-stream',
@@ -69,7 +69,7 @@ const ContentModal = ({ onClose, title = 'Hi，我来帮你解惑了～', update
                     for (const line of lines) {
                         if (line === "") continue;
                         // 移除 data: 前缀，但保留原始的空白字符和换行
-                        let cleanLine = line.replace(/^data:\s*/g, "");
+                        let cleanLine = line.replace(/data:/g, "");
                         if (!cleanLine) continue;
                         
                         // 打印原始数据用于调试

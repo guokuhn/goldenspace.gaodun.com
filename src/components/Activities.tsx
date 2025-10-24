@@ -26,11 +26,11 @@ export default function Activities() {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-2">
                     <Users className="text-primary-400 group-hover/card:scale-110 transition-transform" size={22} />
-                    <h3 className="font-bold text-neutral-800 text-base">圈人奖励</h3>
+                    <h3 className="font-bold text-neutral-800 text-base">圈人赢积分</h3>
                   </div>
                   <ArrowRight className="text-primary-400 group-hover/card:translate-x-1 transition-transform" size={18} />
                 </div>
-                <p className="text-sm text-neutral-600 font-medium">邀请好友助力，赢取丰厚奖励</p>
+                <p className="text-sm text-neutral-600 font-medium">邀请好友助力，赢取海量积分</p>
               </div>
             </Link>
 
@@ -66,7 +66,7 @@ export default function Activities() {
           </div>
 
           {/* PK挑战赛 */}
-          <div>
+          <div className='mt-[70px]'>
             <Link
               to="/pk"
               className="relative bg-gradient-to-br from-secondary-50 to-white p-4 rounded-xl hover:shadow-md transition-all block mb-4 border border-secondary-200 overflow-hidden group/card"
@@ -79,7 +79,7 @@ export default function Activities() {
                   </div>
                   <ArrowRight className="text-secondary-400 group-hover/card:translate-x-1 transition-transform" size={18} />
                 </div>
-                <p className="text-sm text-neutral-600 font-medium">随机匹配对手，一决高下</p>
+                <p className="text-sm text-neutral-600 font-medium">随机匹配对手，一决高下抢积分</p>
               </div>
             </Link>
 

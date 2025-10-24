@@ -103,7 +103,7 @@ export default function CoursesPage() {
                 />
               </div>
               <div className="p-4">
-                <h3 className="font-semibold module-secondary mb-2 line-clamp-2 h-12">{course.title}</h3>
+                <h3 className="font-semibold text-neutral-800 mb-2 line-clamp-2 h-12">{course.title}</h3>
                 <div className="flex flex-wrap gap-1 mb-3">
                   {course.tags.map((tag, idx) => (
                     <span key={idx} className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded">

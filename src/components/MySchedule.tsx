@@ -181,8 +181,9 @@ const MySchedule = observer(function MySchedule({
 
     // 去看看
     const goToSee = (schedule: TaskResponse) => {
+        console.log('-----> ', schedule)
+        setSelectedSchedule(schedule);
         if (schedule.jumpType === 'AI') {
-            setSelectedSchedule(schedule);
             setShowContentModal(true);
         } 
 
@@ -541,7 +542,7 @@ const MySchedule = observer(function MySchedule({
             {showQRCodeModal && (
                 <QRCodeModal
                     onClose={() => setShowQRCodeModal(false)}
-                    qrValue={window.location.origin + '/schedule'}
+                    qrImagePath={selectedSchedule?.toolCodeImageUrl}
                     title="学姐助你成长"
                     description="手机微信扫码立即体验"
                 />

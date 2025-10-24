@@ -15,15 +15,13 @@ export default function Rankings() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-primary-50 to-white rounded-xl p-4 mb-5 border border-primary-200">
-          <div className="text-center">
-            <div className="flex items-center justify-center space-x-2 mb-1">
-              <Crown className="text-[#2790FD]" size={24} />
-              <p className="text-lg font-bold text-[#2790FD]">百万成长计划</p>
-            </div>
-            <p className="text-sm text-neutral-600 font-medium">百万公益基金 · 助你成为更好的自己</p>
-          </div>
-        </div>
+      <div className="rounded-xl mb-5 overflow-hidden">
+        <img 
+          src="/images/baiwan.png" 
+          alt="百万成长计划" 
+          className="w-full h-auto object-cover"
+        />
+      </div>
 
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         {/* 总排行榜 - 展示3条数据 */}
