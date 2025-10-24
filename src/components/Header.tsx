@@ -13,15 +13,15 @@ export default function Header({ isLoggedIn, user, onLoginClick, onLogout }: Hea
   return (
     <header className="bg-white backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-neutral-200">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center space-x-3 group">
-          <GraduationCap className="text-2xl text-primary-400 transition-transform duration-300 group-hover:scale-110" size={40} />
-          <div>
-            <h1 className="text-2xl font-bold text-primary-400">
-              Golden Space
-            </h1>
-            <p className="text-xs text-neutral-500">大学生成长云空间</p>
-          </div>
+        <Link to="/" className="flex items-center group">
+          <img 
+            src="/images/logo2.png" 
+            alt="Golden Space - 大学生学习成长云空间" 
+            className="h-16 transition-transform duration-300 group-hover:scale-105"
+          />
         </Link>
+
+        {/** 播放器 icon */}
 
         <div className="flex items-center space-x-6">
           {isLoggedIn && user ? (
@@ -41,7 +41,6 @@ export default function Header({ isLoggedIn, user, onLoginClick, onLogout }: Hea
                   <p className="font-semibold text-neutral-800 group-hover:text-primary-400 transition-colors">{user.name}</p>
                   <p className="text-xs text-neutral-500">{user.school} · {user.grade}</p>
                 </div>
-                <ChevronRight size={16} className="text-neutral-400 group-hover:text-primary-400 transition-colors transform group-hover:translate-x-1" />
               </div>
               {onLogout && (
                 <button

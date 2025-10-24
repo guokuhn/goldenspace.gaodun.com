@@ -85,8 +85,8 @@ export default function OnboardingPage({ user, onUpdateUser }: OnboardingPagePro
     }
   };
 
-  const grades = ['大一', '大二', '大三', '大四', '研一', '研二', '研三'];
-  const goals = ['普通就业', '体制内就业', '保研', '考研', '留学', '创业'];
+  const grades = ['大一', '大二', '大三', '大四'];
+  const goals = ['公务员', '事业单位', '央国企', '银行', '保研', '考研', "留学"];
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">

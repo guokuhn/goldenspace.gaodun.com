@@ -1,8 +1,19 @@
 import { Link } from 'react-router-dom';
 import { BookOpen, Video, Briefcase, ChevronRight, Gift, FileText, MessageCircle, Target, Briefcase as BriefcaseIcon, Building } from 'lucide-react';
 import { mockCourses, mockLives } from '../data/mockData';
+import { useState } from 'react';
+import QRCodeModal from './QRCodeModal';
 
 export default function GrowthPackage() {
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [currentQRImage, setCurrentQRImage] = useState('');
+  const [currentQRTitle, setCurrentQRTitle] = useState('');
+
+  const handleQRClick = (imagePath: string, title: string) => {
+    setCurrentQRImage(imagePath);
+    setCurrentQRTitle(title);
+    setShowQRModal(true);
+  };
 
   return (
     <div className="card p-6">
@@ -103,39 +114,45 @@ export default function GrowthPackage() {
               <Briefcase className="text-primary-500" size={20} />
               <h3 className="font-semibold module-secondary">实习求职</h3>
             </div>
-            <Link to="/internships" className="text-xs module-primary hover:module-secondary flex items-center space-x-1">
+            {/* <Link to="/internships" className="text-xs module-primary hover:module-secondary flex items-center space-x-1">
               <span>更多</span>
               <ChevronRight size={12} className="transition-transform hover:translate-x-0.5" />
-            </Link>
+            </Link> */}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-            <a href="#" className="bg-gradient-to-br from-neutral-50 to-secondary-50 p-4 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all text-center group">
+            <a href="https://say.gaodun.com/position" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-br from-neutral-50 to-secondary-50 p-4 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all text-center group">
               <FileText className="text-2xl text-secondary-400 mb-2 mx-auto transition-transform group-hover:scale-110" size={28} />
               <p className="text-sm font-medium text-neutral-800">AI简历</p>
             </a>
-            <a href="#" className="bg-gradient-to-br from-neutral-50 to-secondary-50 p-4 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all text-center group">
+            <button onClick={() => handleQRClick('/images/qr/image1.png', 'AI面试')} className="bg-gradient-to-br from-neutral-50 to-secondary-50 p-4 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all text-center group w-full">
               <MessageCircle className="text-2xl text-secondary-400 mb-2 mx-auto transition-transform group-hover:scale-110" size={28} />
               <p className="text-sm font-medium text-neutral-800">AI面试</p>
-            </a>
-            <a href="#" className="bg-gradient-to-br from-neutral-50 to-secondary-50 p-4 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all text-center group">
+            </button>
+            <button onClick={() => handleQRClick('/images/qr/image2.png', 'AI网申')} className="bg-gradient-to-br from-neutral-50 to-secondary-50 p-4 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all text-center group w-full">
               <FileText className="text-2xl text-secondary-400 mb-2 mx-auto transition-transform group-hover:scale-110" size={28} />
               <p className="text-sm font-medium text-neutral-800">AI网申</p>
-            </a>
-            <a href="#" className="bg-gradient-to-br from-neutral-50 to-secondary-50 p-4 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all text-center group">
-              <Target className="text-2xl text-secondary-400 mb-2 mx-auto transition-transform group-hover:scale-110" size={28} />
-              <p className="text-sm font-medium text-neutral-800">AI选岗</p>
-            </a>
-            <a href="#" className="bg-gradient-to-br from-neutral-50 to-secondary-50 p-4 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all text-center group">
+            </button>
+            <button onClick={() => handleQRClick('/images/qr/image3.png', '实习职位')} className="bg-gradient-to-br from-neutral-50 to-secondary-50 p-4 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all text-center group w-full">
               <BriefcaseIcon className="text-2xl text-secondary-400 mb-2 mx-auto transition-transform group-hover:scale-110" size={28} />
               <p className="text-sm font-medium text-neutral-800">实习职位</p>
-            </a>
-            <a href="#" className="bg-gradient-to-br from-neutral-50 to-secondary-50 p-4 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all text-center group">
+            </button>
+            <button onClick={() => handleQRClick('/images/qr/image4.png', '体制内职位')} className="bg-gradient-to-br from-neutral-50 to-secondary-50 p-4 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all text-center group w-full">
               <Building className="text-2xl text-secondary-400 mb-2 mx-auto transition-transform group-hover:scale-110" size={28} />
               <p className="text-sm font-medium text-neutral-800">体制内职位</p>
-            </a>
+            </button>
           </div>
         </div>
       </div>
+
+      {/* 二维码弹窗 */}
+      {showQRModal && (
+        <QRCodeModal
+          onClose={() => setShowQRModal(false)}
+          qrImagePath={currentQRImage}
+          title={currentQRTitle}
+          description="扫描二维码了解更多"
+        />
+      )}
     </div>
   );
 }

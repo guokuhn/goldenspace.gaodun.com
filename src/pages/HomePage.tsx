@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { User } from '../types';
 import Header from '../components/Header';
 import DailyReport from '../components/DailyReport';
@@ -7,6 +8,7 @@ import Activities from '../components/Activities';
 import GrowthPackage from '../components/GrowthPackage';
 import ScheduleSquare from '../components/ScheduleSquare';
 import Community from '../components/Community';
+import WelcomeOverlay from '../components/WelcomeOverlay';
 
 interface HomePageProps {
   isLoggedIn: boolean;
@@ -16,8 +18,29 @@ interface HomePageProps {
 }
 
 export default function HomePage({ isLoggedIn, user, onLoginClick, onLogout }: HomePageProps) {
+  const [showWelcome, setShowWelcome] = useState(false);
+
+  // 检查是否首次访问
+  useEffect(() => {
+    const hasVisited = localStorage.getItem('goldenspace_visited');
+    if (!hasVisited && !isLoggedIn) {
+      setShowWelcome(true);
+    }
+  }, [isLoggedIn]);
+
+  // 处理欢迎页开始按钮点击
+  const handleWelcomeStart = () => {
+    localStorage.setItem('goldenspace_visited', 'true');
+    setShowWelcome(false);
+    // 触发登录弹窗
+    onLoginClick();
+  };
+
   return (
     <div className="min-h-screen">
+      {/* 欢迎覆盖层 */}
+      {showWelcome && <WelcomeOverlay onStart={handleWelcomeStart} />}
+      
       <Header isLoggedIn={isLoggedIn} user={user} onLoginClick={onLoginClick} onLogout={onLogout} />
       
       <main className="container mx-auto px-4 py-6 max-w-7xl">

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { observer } from 'mobx-react-lite';
 import HomePage from './pages/HomePage';
 import ScheduleDetailPage from './pages/ScheduleDetailPage';
@@ -14,13 +14,16 @@ import UserScheduleDetailPage from './pages/UserScheduleDetailPage';
 import OnboardingPage from './pages/OnboardingPage';
 import PointsDetailPage from './pages/PointsDetailPage';
 import MobileSchedulePage from './pages/MobileSchedulePage';
+
 import LoginModal from './components/LoginModal';
+import ScrollToTop from './components/ScrollToTop';
 import { User } from './types';
 import { useUserStore } from './stores';
 
 const App = observer(() => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const userStore = useUserStore();
+  const navigate = useNavigate();
 
   // 构造当前用户对象（完全使用 userStore 的真实数据）
   const currentUser: User | null = userStore.isLoggedIn && userStore.userInfo
@@ -63,6 +66,7 @@ const App = observer(() => {
 
   return (
     <>
+      <ScrollToTop />
       <Routes>
         <Route 
           path="/" 

@@ -100,6 +100,10 @@ export interface TaskResponse {
   taskTypeName?: string;
   /** 更新时间 */
   updateTime?: string;
+  /** 跳转类型 */
+  jumpType?: string;
+  /** 二维码图片 */
+  toolCodeImageUrl?: string;
 }
 
 /**

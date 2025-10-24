@@ -58,8 +58,8 @@ export default function MobileSchedulePage() {
       // 调用 API 获取任务列表
       const response = await apiService.getTaskList({
         userId,
-        startTime,
-        endTime
+        startDay: startTime,
+        endDay: endTime
       });
       
       if (response.status !== 200 || !response.result) {

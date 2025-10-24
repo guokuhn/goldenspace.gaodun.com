@@ -10,6 +10,7 @@ import {
     ArrowRight,
     Smartphone,
     Loader2,
+    ExternalLink,
 } from "lucide-react";
 import {
     LineChart,
@@ -31,6 +32,8 @@ import { getWeekRange } from "../utils/scheduleGenerator";
 import AddScheduleModal from "./AddScheduleModal";
 import SyncScheduleModal from "./SyncScheduleModal";
 import ReferralConfirmModal from "./ReferralConfirmModal";
+import ContentModal from "./ContentModal";
+import QRCodeModal from "./QRCodeModal";
 
 interface MyScheduleProps {
     isLoggedIn: boolean;
@@ -45,6 +48,9 @@ const MySchedule = observer(function MySchedule({
     const [showAddModal, setShowAddModal] = useState(false);
     const [showSyncModal, setShowSyncModal] = useState(false);
     const [showReferralModal, setShowReferralModal] = useState(false);
+    const [showContentModal, setShowContentModal] = useState(false);
+    const [showQRCodeModal, setShowQRCodeModal] = useState(false);
+    const [selectedSchedule, setSelectedSchedule] = useState<TaskResponse | null>(null);
     const [pendingScheduleId, setPendingScheduleId] = useState<string | null>(
         null
     );
@@ -94,6 +100,27 @@ const MySchedule = observer(function MySchedule({
         fetchTasks();
     }, [isLoggedIn, userStore.userId]);
 
+    // 轮询逻辑：当列表为空时每2秒请求一次
+    useEffect(() => {
+        if (!isLoggedIn || !userStore.userId) {
+            return;
+        }
+
+        // 如果列表为空，开始轮询
+        if (schedules.length === 0 && !isLoading) {
+            const pollingInterval = setInterval(() => {
+                console.log("📡 列表为空，执行轮询请求...");
+                fetchTasks();
+            }, 2000); // 每2秒轮询一次
+
+            // 清理定时器
+            return () => {
+                console.log("🛑 停止轮询");
+                clearInterval(pollingInterval);
+            };
+        }
+    }, [schedules.length, isLoggedIn, userStore.userId, isLoading]);
+
     const toggleComplete = async (id: number) => {
         const schedule = schedules.find((s) => s.id === id);
         if (!schedule) return;
@@ -106,11 +133,6 @@ const MySchedule = observer(function MySchedule({
         const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         
         const scheduleDate = schedule.taskDate?.substring(0, 10) || '';
-        console.log('scheduleDate', scheduleDate);
-        console.log('todayStr', todayStr);
-        
-        console.log('今天日期:', todayStr === scheduleDate);
-        console.log('任务日期:', scheduleDate);
         
         // 如果今天早于任务日期，不能提前完成
         if (todayStr < scheduleDate) {
@@ -157,31 +179,51 @@ const MySchedule = observer(function MySchedule({
         alert("恭喜完成拉新任务！日程已标记为完成，您获得了50积分奖励🎉");
     };
 
+    // 去看看
+    const goToSee = (schedule: TaskResponse) => {
+        if (schedule.jumpType === 'AI') {
+            setSelectedSchedule(schedule);
+            setShowContentModal(true);
+        } 
+
+        if (schedule.toolCodeImageUrl) {
+            setShowQRCodeModal(true);
+        }
+    };
     if (!isLoggedIn) {
         return (
-            <div className="card p-6">
-                <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-2">
-                        <Calendar className="module-icon" size={24} />
-                        <h2 className="text-xl font-bold module-title">
-                            我的日程
-                        </h2>
+            <div className="card p-6 h-[750px] flex flex-col relative overflow-hidden">
+                {/* 背景图片 */}
+                <div 
+                    className="absolute inset-0 bg-cover bg-center opacity-20 blur-sm"
+                    style={{ backgroundImage: 'url(/images/xuejie3.png)' }}
+                />
+                
+                {/* 内容层 */}
+                <div className="relative z-10 flex flex-col h-full">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center space-x-2">
+                            <Calendar className="module-icon" size={24} />
+                            <h2 className="text-xl font-bold module-title">
+                                我的日程
+                            </h2>
+                        </div>
                     </div>
-                </div>
-                <div className="text-center py-12">
-                    <Calendar
-                        className="text-6xl module-secondary mb-4 mx-auto"
-                        size={80}
-                    />
-                    <p className="module-secondary mb-6">
-                        登录后开始制定您的成长计划
-                    </p>
-                    <button
-                        onClick={onLoginClick}
-                        className="primary-button px-8 py-3"
-                    >
-                        立即登录
-                    </button>
+                    <div className="text-center py-12 flex-1 flex flex-col items-center justify-center">
+                        {/* <Calendar
+                            className="text-6xl module-secondary mb-4 mx-auto"
+                            size={80}
+                        /> */}
+                        <p className="mb-12 text-4xl font-semibold bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 bg-clip-text text-transparent">
+                            开始制定您的成长计划
+                        </p>
+                        <button
+                            onClick={onLoginClick}
+                            className="primary-button px-8 py-3"
+                        >
+                            立即开始
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -204,23 +246,25 @@ const MySchedule = observer(function MySchedule({
             </div>
 
             {/* 左右两栏布局 */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 overflow-hidden">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 overflow-hidden relative">
+                {/* Loading遮罩层 - 覆盖整个模块 */}
+                {isLoading && (
+                    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
+                        <div className="text-center">
+                            <Loader2
+                                className="animate-spin text-primary-400 mx-auto mb-2"
+                                size={40}
+                            />
+                            <p className="text-neutral-500">
+                                加载日程中...
+                            </p>
+                        </div>
+                    </div>
+                )}
+
                 {/* 左侧：日程事项 */}
                 <div className="flex flex-col h-full overflow-y-auto">
-                    {isLoading ? (
-                        <div className="flex-1 flex items-center justify-center">
-                            <div className="text-center">
-                                <Loader2
-                                    className="animate-spin text-primary-400 mx-auto mb-2"
-                                    size={40}
-                                />
-                                <p className="text-neutral-500">
-                                    加载日程中...
-                                </p>
-                            </div>
-                        </div>
-                    ) : (
-                        <>
+                    <>
                             <div className="space-y-3 mb-6 flex-1 overflow-y-auto scrollbar-hide">
                                 {schedules.slice(0, 15).map((schedule) => {
                                     return (
@@ -269,8 +313,22 @@ const MySchedule = observer(function MySchedule({
                                                 </div>
                                             </div>
 
+                                            {/** 去看看按钮 */}
+                                            {!!schedule.jumpType && (
+                                                <button
+                                                    onClick={() => goToSee(schedule)}
+                                                    className="flex-shrink-0 flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-primary-500 bg-primary-50 border border-primary-200 rounded-lg hover:bg-primary-100 hover:border-primary-300 hover:shadow-md transition-all duration-200 group"
+                                                >
+                                                    <span>去看看</span>
+                                                    <ExternalLink 
+                                                        size={14} 
+                                                        className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200"
+                                                    />
+                                                </button>
+                                            )}
+
                                             {/* 图片区域 */}
-                                            {schedule.imageUrl || true && (
+                                            {/* {schedule.imageUrl && (
                                                 <div className="flex-shrink-0 w-26 h-20 rounded-lg overflow-hidden border border-neutral-200 bg-neutral-100">
                                                     <img
                                                         src={schedule.imageUrl || '/images/course1.png'}
@@ -291,7 +349,7 @@ const MySchedule = observer(function MySchedule({
                                                         }}
                                                     />
                                                 </div>
-                                            )}
+                                            )} */}
                                         </div>
                                     );
                                 })}
@@ -304,8 +362,7 @@ const MySchedule = observer(function MySchedule({
                                 <Plus size={20} />
                                 <span>添加日程</span>
                             </button>
-                        </>
-                    )}
+                    </>
                 </div>
 
                 {/* 右侧：趋势图 */}
@@ -420,13 +477,15 @@ const MySchedule = observer(function MySchedule({
                         </div>
                     </div>
 
-                    <button
-                        onClick={() => setShowSyncModal(true)}
-                        className="w-full flex items-center justify-center space-x-2 bg-secondary-50 text-secondary-400 py-3 rounded-lg hover:bg-secondary-100 transition-colors border border-secondary-200 hover:shadow-md mt-6"
-                    >
-                        <Smartphone size={20} />
-                        <span>同步至手机</span>
-                    </button>
+                    <div className="space-y-3 mt-6">
+                        <button
+                            onClick={() => setShowSyncModal(true)}
+                            className="w-full flex items-center justify-center space-x-2 bg-secondary-50 text-secondary-400 py-3 rounded-lg hover:bg-secondary-100 transition-colors border border-secondary-200 hover:shadow-md"
+                        >
+                            <Smartphone size={20} />
+                            <span>同步至手机</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -462,6 +521,29 @@ const MySchedule = observer(function MySchedule({
                         schedules.find((s) => s.id === Number(pendingScheduleId))
                             ?.taskDate || ""
                     }
+                />
+            )}
+
+            {/* 内容查看模态框 */}
+            {showContentModal && selectedSchedule && (
+                <ContentModal
+                    onClose={() => {
+                        setShowContentModal(false);
+                        setSelectedSchedule(null);
+                    }}
+                    title="Hi，我来帮你解惑了～"
+                    taskId={selectedSchedule.id}
+                    updateTime={selectedSchedule.taskDate}
+                />
+            )}
+
+            {/* 二维码模态框 */}
+            {showQRCodeModal && (
+                <QRCodeModal
+                    onClose={() => setShowQRCodeModal(false)}
+                    qrValue={window.location.origin + '/schedule'}
+                    title="学姐助你成长"
+                    description="手机微信扫码立即体验"
                 />
             )}
         </div>
