@@ -37,6 +37,9 @@ export default function DailyReport({ user, onLoginClick }: DailyReportProps) {
   const [isUserScrolling, setIsUserScrolling] = useState(false);
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isHovering, setIsHovering] = useState(false);
+  const touchStartY = useRef<number>(0);
+  const touchStartScrollTop = useRef<number>(0);
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   useEffect(() => {
     // 如果用户已登录,检查是否需要显示报告
@@ -76,6 +79,46 @@ export default function DailyReport({ user, onLoginClick }: DailyReportProps) {
           setIsUserScrolling(false);
         }
       }, 2000);
+    }
+  };
+
+  // H5 触摸开始事件
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!messagesContainerRef.current) return;
+    touchStartY.current = e.touches[0].clientY;
+    touchStartScrollTop.current = messagesContainerRef.current.scrollTop;
+  };
+
+  // H5 触摸移动事件
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!messagesContainerRef.current) return;
+    
+    const touchY = e.touches[0].clientY;
+    const deltaY = touchStartY.current - touchY;
+    
+    // 更新滚动位置
+    messagesContainerRef.current.scrollTop = touchStartScrollTop.current + deltaY;
+    
+    // 标记用户正在滚动
+    setIsUserScrolling(true);
+    
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+  };
+
+  // H5 触摸结束事件
+  const handleTouchEnd = () => {
+    // 检查是否滚动到底部
+    if (isScrolledToBottom()) {
+      setIsUserScrolling(false);
+    } else {
+      // 1.5秒后重置用户滚动状态
+      scrollTimeoutRef.current = setTimeout(() => {
+        if (isScrolledToBottom()) {
+          setIsUserScrolling(false);
+        }
+      }, 1500);
     }
   };
 
@@ -199,7 +242,7 @@ export default function DailyReport({ user, onLoginClick }: DailyReportProps) {
             const reportIndex = newMessages.findIndex(msg => msg.type === 'report');
             if (reportIndex !== -1) {
               newMessages[reportIndex] = { text: accumulatedContent, isUser: false, type: 'report' };
-              console.log('报告内容更新:', accumulatedContent.substring(0, 100)); // 调试日志
+              // console.log('报告内容更新:', accumulatedContent.substring(0, 100)); // 调试日志
             }
             return newMessages;
           });
@@ -383,19 +426,23 @@ export default function DailyReport({ user, onLoginClick }: DailyReportProps) {
       </div>
 
       <div 
-        ref={messagesContainerRef}        onScroll={handleScroll}
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
+        ref={messagesContainerRef}
+        onScroll={handleScroll}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseEnter={() => !isMobile && setIsHovering(true)}
+        onMouseLeave={() => !isMobile && setIsHovering(false)}
         className="bg-white rounded-xl p-4 mb-4 flex-1 space-y-4 scrollbar-hide border border-primary-400"
-        style={{ overflowY: isHovering ? 'auto' : 'hidden' }}
+        style={{ overflowY: isMobile || isHovering ? 'auto' : 'hidden' }}
       >
         {/* 统一消息列表 - 按顺序渲染所有消息 */}
         {messages.map((msg, index) => {
-          console.log(`消息${index}:`, { type: msg.type, isUser: msg.isUser, hasText: !!msg.text });
+          // console.log(`消息${index}:`, { type: msg.type, isUser: msg.isUser, hasText: !!msg.text });
           
           // 报告类型消息特殊处理
           if (msg.type === 'report') {
-            console.log('渲染报告消息:', { text: msg.text?.substring(0, 50), isLoadingReport, hasText: !!msg.text }); // 调试日志
+            // console.log('渲染报告消息:', { text: msg.text?.substring(0, 50), isLoadingReport, hasText: !!msg.text }); // 调试日志
             
             // 如果报告内容为空且不在加载中，不渲染
             if (!msg.text && !isLoadingReport) {
