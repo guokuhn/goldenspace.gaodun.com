@@ -117,10 +117,10 @@ export default function PointsDetailPage({ user }: PointsDetailPageProps) {
                 积分如何转化为公益基金？
               </h3>
               <ul className="space-y-2 text-neutral-600">
-                <li className="flex items-start">
+                {/* <li className="flex items-start">
                   <span className="text-primary-400 mr-2">•</span>
                   <span>每 100 积分 = 1 元公益基金</span>
-                </li>
+                </li> */}
                 <li className="flex items-start">
                   <span className="text-primary-400 mr-2">•</span>
                   <span>积分通过完成学习打卡、参与活动、分享内容等方式获得</span>
@@ -138,7 +138,7 @@ export default function PointsDetailPage({ user }: PointsDetailPageProps) {
           </div>
 
           {/* 兑换规则 */}
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <h3 className="font-bold text-neutral-800 mb-4 flex items-center">
               <Gift className="text-primary-400 mr-2" size={20} />
               兑换规则
@@ -154,7 +154,7 @@ export default function PointsDetailPage({ user }: PointsDetailPageProps) {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* 兑换按钮 */}
           <div className="text-center">
@@ -222,7 +222,7 @@ export default function PointsDetailPage({ user }: PointsDetailPageProps) {
                 <CheckCircle className="text-primary-400" size={28} />
               </div>
               <h4 className="font-bold text-neutral-800 mb-2">每日打卡</h4>
-              <p className="text-sm text-neutral-600">完成学习任务，每天最多可获得 50 积分</p>
+              <p className="text-sm text-neutral-600">完成学习任务</p>
             </div>
             <div className="text-center">
               <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3 border border-neutral-200">

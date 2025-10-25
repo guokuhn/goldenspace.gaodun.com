@@ -175,10 +175,10 @@ export default function GrowthPackage() {
             </Link> */}
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                        <a
-                            href="https://say.gaodun.com/position"
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        <button
+                            onClick={() =>
+                                handleQRClick("/images/qr/image3.png", "AI面试")
+                            }
                             className="bg-gradient-to-br from-neutral-50 to-secondary-50 p-4 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all text-center group"
                         >
                             <FileText
@@ -188,7 +188,7 @@ export default function GrowthPackage() {
                             <p className="text-sm font-medium text-neutral-800">
                                 AI简历
                             </p>
-                        </a>
+                        </button>
                         <button
                             onClick={() =>
                                 handleQRClick("/images/qr/image1.png", "AI面试")
@@ -203,10 +203,9 @@ export default function GrowthPackage() {
                                 AI面试
                             </p>
                         </button>
-                        <button
-                            onClick={() =>
-                                handleQRClick("/images/qr/image2.png", "AI网申")
-                            }
+                        <a
+                            href="https://wangshen.gaodun.com"
+                            target="_blank"
                             className="bg-gradient-to-br from-neutral-50 to-secondary-50 p-4 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all text-center group w-full"
                         >
                             <FileText
@@ -216,11 +215,11 @@ export default function GrowthPackage() {
                             <p className="text-sm font-medium text-neutral-800">
                                 AI网申
                             </p>
-                        </button>
+                        </a>
                         <button
                             onClick={() =>
                                 handleQRClick(
-                                    "/images/qr/image3.png",
+                                    "/images/qr/imageN.png",
                                     "实习职位"
                                 )
                             }
@@ -234,13 +233,9 @@ export default function GrowthPackage() {
                                 实习职位
                             </p>
                         </button>
-                        <button
-                            onClick={() =>
-                                handleQRClick(
-                                    "/images/qr/image4.png",
-                                    "体制内职位"
-                                )
-                            }
+                        <a
+                            href="https://say.gaodun.com/position"
+                            target="_blank"
                             className="bg-gradient-to-br from-neutral-50 to-secondary-50 p-4 rounded-xl hover:shadow-lg transform hover:-translate-y-1 transition-all text-center group w-full"
                         >
                             <Building
@@ -250,7 +245,7 @@ export default function GrowthPackage() {
                             <p className="text-sm font-medium text-neutral-800">
                                 体制内职位
                             </p>
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
