@@ -54,7 +54,7 @@ export default function HomePage({ isLoggedIn, user, onLoginClick, onLogout }: H
 
             {/* 每日报告 - 占1/3区域 */}
             <div>
-              <DailyReport user={user} />
+              <DailyReport user={user} onLoginClick={onLoginClick} />
             </div>
           </div>
         </section>

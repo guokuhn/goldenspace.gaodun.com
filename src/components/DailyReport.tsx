@@ -1,44 +1,198 @@
 import { useState, useEffect, useRef } from 'react';
 import { Send, Sparkles, Bot, User as UserIcon, Volume2, VolumeX } from 'lucide-react';
 import { User } from '../types';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
+import rehypeRaw from 'rehype-raw';
 
 interface DailyReportProps {
   user: User | null;
+  onLoginClick?: () => void;
 }
 
-export default function DailyReport({ user }: DailyReportProps) {
-  const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([]);
+interface Message {
+  text: string;
+  isUser: boolean;
+  type: 'welcome' | 'report' | 'chat';
+}
+
+const we: Message = {
+  text: `欢迎来到您的成长云空间，我是您的专属成长助理 Golden，下面为您提供每日成长记录和推荐内容，有任何问题都可以问我哦！`,
+  isUser: false,
+  type: 'welcome'
+}
+
+export default function DailyReport({ user, onLoginClick }: DailyReportProps) {
+  const [messages, setMessages] = useState<Message[]>([we]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [isLoadingReport, setIsLoadingReport] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const reportControllerRef = useRef<AbortController | null>(null);
+  const chatControllerRef = useRef<AbortController | null>(null);
+
+  // useEffect(() => {
+  //   // 初始欢迎语
+  //   const welcomeMsg = `欢迎来到您的成长云空间，我是您的专属成长助理 Golden，下面为您提供每日成长记录和推荐内容，有任何问题都可以问我哦！`;
+    
+  //   setIsTyping(true);
+  //   setTimeout(() => {
+  //     setMessages([{ text: welcomeMsg, isUser: false, type: 'welcome' }]);
+  //     setIsTyping(false);
+  //   }, 10);
+  // }, []);
 
   useEffect(() => {
-    // 初始欢迎语
-    const welcomeMsg = `欢迎来到您的成长云空间，我是您的专属成长助理 Golden，下面为您提供每日成长记录和推荐内容，有任何问题都可以问我哦！`;
-    
-    setIsTyping(true);
-    setTimeout(() => {
-      setMessages([{ text: welcomeMsg, isUser: false }]);
-      setIsTyping(false);
-      
-      // 播报每日数据
-      if (user) {
-        setTimeout(() => {
-          const dailyReport = ` 今日数据播报：
-          
-✅ 本周已完成打卡：5次
-🏆 累计获得积分：${user.points}分
-🎯 参与活动：2个
-📚 推荐课程：Python编程基础、数据结构与算法
-🛠️ 推荐工具：AI简历生成器
+    // 如果用户已登录,检查是否需要显示报告
+    if (user?.id) {
+      console.log('useEffect触发，准备检查报告'); // 调试日志
+      checkAndFetchReport(user.id);
+    }
 
-继续加油哦！`;
-          setMessages(prev => [...prev, { text: dailyReport, isUser: false }]);
-        }, 1500);
+    // 清理函数
+    return () => {
+      reportControllerRef.current?.abort();
+      chatControllerRef.current?.abort();
+    };
+  }, [user?.id]);
+
+  // 检查是否有报告并获取报告内容
+  const checkAndFetchReport = async (userId: string) => {
+    try {
+      console.log('开始检查报告，userId:', userId); // 调试日志
+      // 1. 先调用检查接口
+      const checkResponse = await fetch(`https://gtech19.gaodun.com/api/v1/task-report/is-show?userId=${userId}`, {
+        method: 'GET',
+      });
+
+      if (!checkResponse.ok) {
+        console.error('检查报告接口调用失败');
+        return;
       }
-    }, 1000);
-  }, [user]);
+
+      const checkData = await checkResponse.json();
+      console.log('检查报告接口返回:', checkData); // 调试日志
+      const shouldShow = checkData?.result || false;
+      console.log('是否显示报告:', shouldShow); // 调试日志
+
+      // 2. 如果result为true，调用流式接口获取报告内容
+      if (shouldShow) {
+        console.log('开始获取报告内容'); // 调试日志
+        await fetchStreamReport(userId);
+      } else {
+        console.log('报告不需要显示'); // 调试日志
+      }
+    } catch (error) {
+      console.error('检查报告失败:', error);
+    }
+  };
+
+  // 获取流式报告内容
+  const fetchStreamReport = async (userId: string) => {
+    try {
+      console.log('fetchStreamReport开始调用create-report接口'); // 调试日志
+      setIsLoadingReport(true);
+      
+      // 添加报告占位符消息
+      setMessages(prev => [...prev, { text: '', isUser: false, type: 'report' }]);
+      
+      // 取消之前的报告请求（如果存在）
+      if (reportControllerRef.current) {
+        reportControllerRef.current.abort();
+      }
+      
+      // 创建新的 AbortController
+      const controller = new AbortController();
+      reportControllerRef.current = controller;
+      
+      const response = await fetch(`https://gtech19.gaodun.com/api/v1/task-report/create-report?userId=${userId}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'text/event-stream',
+        },
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (!reader) {
+        throw new Error('无法读取响应流');
+      }
+
+      let accumulatedContent = '';
+      let buffer = '';
+      let chunkCount = 0;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) {
+          console.log(`流式响应完成，共接收 ${chunkCount} 个数据块，总字符数: ${accumulatedContent.length}`);
+          break;
+        }
+        
+        chunkCount++;
+
+        const chunk = decoder.decode(value, { stream: true });
+        buffer += chunk;
+
+        const lines: string[] = buffer.split("\n\n");
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (line === "") continue;
+          let cleanLine = line.replace(/data:/g, "");
+          if (!cleanLine) continue;
+          
+          let processedLine = cleanLine.replace(/\\n/g, '\n');
+          processedLine = processedLine.replace(/(#{1,6})([^\s#])/g, '$1 $2');
+          
+          accumulatedContent += processedLine;
+          
+          // 更新报告消息内容
+          setMessages(prev => {
+            const newMessages = [...prev];
+            const reportIndex = newMessages.findIndex(msg => msg.type === 'report');
+            if (reportIndex !== -1) {
+              newMessages[reportIndex] = { text: accumulatedContent, isUser: false, type: 'report' };
+              console.log('报告内容更新:', accumulatedContent.substring(0, 100)); // 调试日志
+            }
+            return newMessages;
+          });
+        }
+      }
+
+    } catch (err) {
+      console.error('获取报告内容失败:', err);
+      console.error('错误类型:', err instanceof Error ? err.name : 'Unknown');
+      console.error('错误详情:', err instanceof Error ? err.message : err);
+      // 在报告消息中添加错误提示
+      setMessages(prev => {
+        const newMessages = [...prev];
+        const reportIndex = newMessages.findIndex(msg => msg.type === 'report');
+        if (reportIndex !== -1) {
+          const currentContent = newMessages[reportIndex].text || '';
+          newMessages[reportIndex] = { 
+            text: currentContent + '\n\n---\n**报告生成过程中出现错误，请稍后重试**', 
+            isUser: false, 
+            type: 'report' 
+          };
+        }
+        return newMessages;
+      });
+    } finally {
+      setIsLoadingReport(false);
+      // 清理报告控制器引用
+      reportControllerRef.current = null;
+    }
+  };
 
   const toggleMute = () => {
     if (videoRef.current) {
@@ -47,25 +201,99 @@ export default function DailyReport({ user }: DailyReportProps) {
     }
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
-    setMessages(prev => [...prev, { text: input, isUser: true }]);
+    // 如果未登录，拉起登录弹窗
+    if (!user) {
+      onLoginClick?.();
+      return;
+    }
+
+    const userInput = input;
     setInput('');
     setIsTyping(true);
 
-    // 模拟AI回复
-    setTimeout(() => {
-      const responses = [
-        '好的，我理解您的问题。根据您的情况，我建议...',
-        '这是一个很好的问题！让我为您查询相关信息...',
-        '根据您的学习目标，我为您推荐以下内容...',
-        '我已经为您找到了相关的课程和资料，请查看...'
-      ];
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      setMessages(prev => [...prev, { text: randomResponse, isUser: false }]);
+    // 添加用户消息和AI占位符到数组末尾
+    setMessages(prev => [
+      ...prev,
+      { text: userInput, isUser: true, type: 'chat' },
+      { text: '', isUser: false, type: 'chat' }
+    ]);
+
+    try {
+      // 取消之前的对话请求（如果存在）
+      if (chatControllerRef.current) {
+        chatControllerRef.current.abort();
+      }
+      
+      // 创建新的 AbortController
+      const controller = new AbortController();
+      chatControllerRef.current = controller;
+      
+      const response = await fetch(`https://gtech19.gaodun.com/api/v1/task-report/chat-sse?userId=${user.id}&userInput=${encodeURIComponent(userInput)}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'text/event-stream',
+        },
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error('请求失败');
+      }
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      if (!reader) {
+        throw new Error('无法读取响应流');
+      }
+
+      let accumulatedContent = '';
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        
+        if (done) {
+          break;
+        }
+
+        const chunk = decoder.decode(value, { stream: true });
+        buffer += chunk;
+
+        const lines: string[] = buffer.split("\n\n");
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (line === "") continue;
+          let cleanLine = line.replace(/data:/g, "");
+          if (!cleanLine) continue;
+          
+          let processedLine = cleanLine.replace(/\\n/g, '\n');
+          processedLine = processedLine.replace(/(#{1,6})([^\s#])/g, '$1 $2');
+          
+          accumulatedContent += processedLine;
+          
+          // 更新AI消息内容（最后一条消息）
+          setMessages(prev => {
+            const newMessages = [...prev];
+            newMessages[newMessages.length - 1] = { text: accumulatedContent, isUser: false, type: 'chat' };
+            return newMessages;
+          });
+        }
+      }
+
       setIsTyping(false);
-    }, 1500);
+    } catch (err) {
+      console.error('发送消息失败:', err);
+      setMessages(prev => [...prev, { text: '抱歉，发送消息失败，请稍后重试。', isUser: false, type: 'chat' }]);
+      setIsTyping(false);
+    } finally {
+      // 清理对话控制器引用
+      chatControllerRef.current = null;
+    }
   };
 
   return (
@@ -105,7 +333,6 @@ export default function DailyReport({ user }: DailyReportProps) {
               <Sparkles size={16} className="text-primary-300 animate-pulse" />
               <h3 className="text-sm font-semibold">Golden学姐为你提供每日成长报告</h3>
             </div>
-            {/* <p className="text-xs text-white/90">了解如何高效使用 Golden Space</p> */}
           </div>
         </div>
 
@@ -119,37 +346,70 @@ export default function DailyReport({ user }: DailyReportProps) {
       </div>
 
       <div className="bg-white rounded-xl p-4 mb-4 flex-1 overflow-y-auto space-y-4 scrollbar-hide border border-primary-400">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'} items-start gap-2`}
-          >
-            {!msg.isUser && <Bot size={16} className="text-primary-400 mt-1 flex-shrink-0" />}
-            <div
-              className={`max-w-[80%] p-3 rounded-lg ${msg.isUser ? 'bg-primary-400 text-white' : 'bg-primary-50 text-neutral-800 border border-primary-400/20'}`}
-            >
-              <p className="whitespace-pre-line text-sm leading-relaxed">{msg.text}</p>
-              {!msg.isUser && msg.text.includes('积分') && (
-                <div className="mt-2 pt-2 border-t border-primary-400/20">
-                  <span className="inline-block bg-primary-50 text-primary-400 text-xs px-2 py-1 rounded-full">推荐课程</span>
+        {/* 统一消息列表 - 按顺序渲染所有消息 */}
+        {messages.map((msg, index) => {
+          console.log(`消息${index}:`, { type: msg.type, isUser: msg.isUser, hasText: !!msg.text });
+          
+          // 报告类型消息特殊处理
+          if (msg.type === 'report') {
+            console.log('渲染报告消息:', { text: msg.text?.substring(0, 50), isLoadingReport, hasText: !!msg.text }); // 调试日志
+            
+            // 如果报告内容为空且不在加载中，不渲染
+            if (!msg.text && !isLoadingReport) {
+              return null;
+            }
+            
+            return (
+              <div key={`msg-${index}`} className="flex justify-start items-start gap-2">
+                <Bot size={16} className="text-primary-400 mt-1 flex-shrink-0" />
+                <div className="max-w-[80%] p-3 rounded-lg bg-primary-50 text-neutral-800 border-2 border-primary-400">
+                  {isLoadingReport && !msg.text ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      <span className="text-sm text-neutral-500 ml-2">正在生成每日报告...</span>
+                    </div>
+                  ) : (
+                    <div className="prose prose-sm max-w-none">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm, remarkBreaks]}
+                        rehypePlugins={[rehypeRaw]}
+                      >
+                        {msg.text}
+                      </ReactMarkdown>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            {msg.isUser && <UserIcon size={16} className="text-neutral-400 mt-1 flex-shrink-0" />}
-          </div>
-        ))}
-        {isTyping && (
-          <div className="flex justify-start items-start gap-2">
-            <Bot size={16} className="text-primary-400 mt-1 flex-shrink-0" />
-            <div className="bg-primary-50 p-3 rounded-lg border border-primary-400/20">
-              <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
+            );
+          }
+          
+          // 欢迎语和对话消息统一处理
+          return (
+            <div
+              key={`msg-${index}`}
+              className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'} items-start gap-2`}
+            >
+              {!msg.isUser && <Bot size={16} className="text-primary-400 mt-1 flex-shrink-0" />}
+              <div
+                className={`max-w-[80%] p-3 rounded-lg ${msg.isUser ? 'bg-primary-400 text-white' : 'bg-primary-50 text-neutral-800 border border-primary-400/20'}`}
+              >
+                {/* 如果是空的AI消息且isTyping为true，显示加载动画 */}
+                {!msg.isUser && !msg.text && isTyping ? (
+                  <div className="flex space-x-2">
+                    <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                ) : (
+                  <p className="whitespace-pre-line text-sm leading-relaxed">{msg.text}</p>
+                )}
+              </div>
+              {msg.isUser && <UserIcon size={16} className="text-neutral-400 mt-1 flex-shrink-0" />}
             </div>
-          </div>
-        )}
+          );
+        })}
       </div>
 
       <div className="flex space-x-2">
