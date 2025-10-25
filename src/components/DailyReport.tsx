@@ -32,17 +32,11 @@ export default function DailyReport({ user, onLoginClick }: DailyReportProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const reportControllerRef = useRef<AbortController | null>(null);
   const chatControllerRef = useRef<AbortController | null>(null);
-
-  // useEffect(() => {
-  //   // 初始欢迎语
-  //   const welcomeMsg = `欢迎来到您的成长云空间，我是您的专属成长助理 Golden，下面为您提供每日成长记录和推荐内容，有任何问题都可以问我哦！`;
-    
-  //   setIsTyping(true);
-  //   setTimeout(() => {
-  //     setMessages([{ text: welcomeMsg, isUser: false, type: 'welcome' }]);
-  //     setIsTyping(false);
-  //   }, 10);
-  // }, []);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const [isUserScrolling, setIsUserScrolling] = useState(false);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
     // 如果用户已登录,检查是否需要显示报告
@@ -57,6 +51,49 @@ export default function DailyReport({ user, onLoginClick }: DailyReportProps) {
       chatControllerRef.current?.abort();
     };
   }, [user?.id]);
+
+  // 检测用户是否滚动到底部
+  const isScrolledToBottom = () => {
+    if (!messagesContainerRef.current) return true;
+    const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
+    return Math.abs(scrollHeight - clientHeight - scrollTop) < 10;
+  };
+
+  // 处理用户滚动事件
+  const handleScroll = () => {
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+
+    // 检查是否滚动到底部
+    if (isScrolledToBottom()) {
+      setIsUserScrolling(false);
+    } else {
+      setIsUserScrolling(true);
+      // 2秒后重置用户滚动状态（防止用户停止滚动后仍然不自动滚动）
+      scrollTimeoutRef.current = setTimeout(() => {
+        if (isScrolledToBottom()) {
+          setIsUserScrolling(false);
+        }
+      }, 2000);
+    }
+  };
+
+  // 自动滚动到底部
+  useEffect(() => {
+    if (!isUserScrolling && messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
+  }, [messages, isUserScrolling, isTyping, isLoadingReport]);
+
+  // 清理滚动定时器
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // 检查是否有报告并获取报告内容
   const checkAndFetchReport = async (userId: string) => {
@@ -297,7 +334,7 @@ export default function DailyReport({ user, onLoginClick }: DailyReportProps) {
   };
 
   return (
-    <div className="card p-6 bg-white h-[750px] flex flex-col">
+    <div className="card p-6 bg-white h-[750px] flex flex-col overflow-hidden">
       <div className="flex items-center space-x-3 mb-4">
         <div className="text-4xl relative group bg-primary-50 rounded-2xl p-3 border-2 border-primary-400">
           <Bot className="text-primary-400" size={40} />
@@ -345,7 +382,13 @@ export default function DailyReport({ user, onLoginClick }: DailyReportProps) {
         </button>
       </div>
 
-      <div className="bg-white rounded-xl p-4 mb-4 flex-1 overflow-y-auto space-y-4 scrollbar-hide border border-primary-400">
+      <div 
+        ref={messagesContainerRef}        onScroll={handleScroll}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+        className="bg-white rounded-xl p-4 mb-4 flex-1 space-y-4 scrollbar-hide border border-primary-400"
+        style={{ overflowY: isHovering ? 'auto' : 'hidden' }}
+      >
         {/* 统一消息列表 - 按顺序渲染所有消息 */}
         {messages.map((msg, index) => {
           console.log(`消息${index}:`, { type: msg.type, isUser: msg.isUser, hasText: !!msg.text });
@@ -402,14 +445,25 @@ export default function DailyReport({ user, onLoginClick }: DailyReportProps) {
                     <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                     <div className="w-2 h-2 bg-primary-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                   </div>
-                ) : (
+                ) : msg.isUser ? (
                   <p className="whitespace-pre-line text-sm leading-relaxed">{msg.text}</p>
+                ) : (
+                  <div className="prose prose-sm max-w-none">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm, remarkBreaks]}
+                      rehypePlugins={[rehypeRaw]}
+                    >
+                      {msg.text}
+                    </ReactMarkdown>
+                  </div>
                 )}
               </div>
               {msg.isUser && <UserIcon size={16} className="text-neutral-400 mt-1 flex-shrink-0" />}
             </div>
           );
         })}
+        {/* 用于滚动定位的元素 */}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="flex space-x-2">
