@@ -189,6 +189,36 @@ class UserStore {
     }
 
     /**
+     * 获取用户积分
+     */
+    get points(): number {
+        return this.userInfo?.points || 0;
+    }
+
+    /**
+     * 更新用户积分
+     * @param points 新的积分值或积分增量
+     * @param isIncrement 是否为增量模式（默认 true）
+     */
+    updatePoints(points: number, isIncrement: boolean = true): void {
+        runInAction(() => {
+            if (this.userInfo) {
+                const newPoints = isIncrement 
+                    ? (this.userInfo.points || 0) + points
+                    : points;
+                
+                this.userInfo = {
+                    ...this.userInfo,
+                    points: Math.max(0, newPoints) // 确保积分不为负数
+                };
+                
+                // 持久化到 localStorage
+                this.saveToStorage(this.userInfo);
+            }
+        });
+    }
+
+    /**
      * 更新用户个人资料（调用后端接口）
      * @param data 用户资料数据
      */

@@ -29,6 +29,7 @@ import apiService from "../services/api";
 import { TaskResponse } from "../types/api";
 import ContentModal from "../components/ContentModal";
 import QRCodeModal from "../components/QRCodeModal";
+import { userStore } from "../stores/UserStore";
 
 interface ScheduleDetailPageProps {
     user: User | null;
@@ -118,6 +119,12 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
                     s.id === taskId ? { ...s, taskStatus: 1 } : s
                 )
             );
+            
+            // 完成任务后累加积分
+            const earnedPoints = task.taskPoints || 0;
+            if (earnedPoints > 0) {
+                userStore.updatePoints(earnedPoints);
+            }
         } catch (error) {
             console.error("更新任务状态失败:", error);
         }

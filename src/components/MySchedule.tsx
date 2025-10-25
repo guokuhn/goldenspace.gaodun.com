@@ -167,6 +167,12 @@ const MySchedule = observer(function MySchedule({
         });
         if (response.status === 200) {
             setSchedules(schedules.map((s) => s.id === id ? { ...s, taskStatus: 1 } : s));
+            
+            // 完成任务后累加积分
+            const earnedPoints = schedule.taskPoints || 0;
+            if (earnedPoints > 0) {
+                userStore.updatePoints(earnedPoints);
+            }
         }
     };
 
@@ -181,6 +187,10 @@ const MySchedule = observer(function MySchedule({
         );
         setSchedules(updatedSchedules);
         localStorage.setItem("userSchedules", JSON.stringify(updatedSchedules));
+
+        // 拉新任务奖励积分
+        const referralPoints = 50;
+        userStore.updatePoints(referralPoints);
 
         // 重置状态
         setShowReferralModal(false);

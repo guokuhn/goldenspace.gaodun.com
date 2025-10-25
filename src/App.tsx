@@ -35,7 +35,7 @@ const App = observer(() => {
         major: userStore.userInfo.major || '',
         grade: userStore.userInfo.grade || '',
         goal: (userStore.userInfo.target as User['goal']) || '普通就业',
-        points: 0, // 积分初始值，后续可从后端获取
+        points: userStore.points, // 从 UserStore 获取积分
         avatar: userStore.userInfo.nickName.charAt(0), // 使用昵称首字符作为默认头像
       }
     : null;

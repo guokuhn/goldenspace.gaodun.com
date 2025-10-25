@@ -41,6 +41,7 @@ export interface UserInfo {
   major?: string;
   school?: string;
   target?: string;
+  points?: number;
 }
 
 /**
