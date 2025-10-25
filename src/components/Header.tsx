@@ -32,10 +32,10 @@ export default function Header({ isLoggedIn, user, onLoginClick, onLogout }: Hea
               >
                 <Trophy className="text-primary-400 group-hover/points:scale-110 transition-transform" size={20} />
                 <span className="font-semibold text-primary-400">{user.points}</span>
-                <span className="text-sm text-neutral-500">积分</span>
+                <span className="text-sm text-neutral-500">积分兑现金</span>
                 <ChevronRight size={14} className="text-neutral-400 group-hover/points:text-primary-400 transition-colors" />
               </Link>
-              <div className="flex items-center space-x-3 group cursor-pointer">
+              <div className="hidden md:flex items-center space-x-3 group cursor-pointer">
                 <div className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center text-2xl border border-primary-50 transition-transform duration-300 group-hover:scale-110">{user.avatar || '👨‍🎓'}</div>
                 <div className="hidden md:block">
                   <p className="font-semibold text-neutral-800 group-hover:text-primary-400 transition-colors">{user.name}</p>
@@ -45,7 +45,7 @@ export default function Header({ isLoggedIn, user, onLoginClick, onLogout }: Hea
               {onLogout && (
                 <button
                   onClick={onLogout}
-                  className="flex items-center space-x-2 px-4 py-2 rounded-lg border border-neutral-200 text-neutral-600 hover:border-primary-400 hover:text-primary-400 hover:bg-primary-50 transition-all duration-300 font-medium"
+                  className="hidden md:flex items-center space-x-2 px-4 py-2 rounded-lg border border-neutral-200 text-neutral-600 hover:border-primary-400 hover:text-primary-400 hover:bg-primary-50 transition-all duration-300 font-medium"
                   title="退出登录"
                 >
                   <LogOut size={18} />

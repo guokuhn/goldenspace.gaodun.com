@@ -132,8 +132,9 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
 
     // 去看看
     const goToSee = (schedule: TaskResponse) => {
-        if (schedule.taskSourceName === "AI") {
-            setSelectedSchedule(schedule);
+        setSelectedSchedule(schedule);
+        
+        if (schedule.jumpType === "AI") {
             setShowContentModal(true);
         }
 
@@ -299,6 +300,12 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
                                                 }
                                             }}
                                         />
+                                        {/* 任务类型标签 */}
+                                        {(schedule.taskType === 1 || schedule.taskType === 2) && (
+                                            <div className="absolute top-1 left-1 px-2 py-0.5 text-xs font-medium text-white bg-black/60 rounded">
+                                                {schedule.taskType === 1 ? "直播" : "课程"}
+                                            </div>
+                                        )}
                                         {/* 去看看按钮 */}
                                         {!!schedule.jumpType && (
                                             <button
@@ -575,7 +582,12 @@ export default function ScheduleDetailPage({ user }: ScheduleDetailPageProps) {
 
             {/* QRCodeModal 弹窗 */}
             {showQRCodeModal && (
-                <QRCodeModal onClose={() => setShowQRCodeModal(false)} />
+                <QRCodeModal
+                    onClose={() => setShowQRCodeModal(false)}
+                    qrImagePath={selectedSchedule?.toolCodeImageUrl}
+                    title="学姐助你成长"
+                    description="手机微信扫码立即体验"
+                />
             )}
 
             {/* 页面Loading遮罩 */}

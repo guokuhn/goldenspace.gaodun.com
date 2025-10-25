@@ -214,7 +214,7 @@ const MySchedule = observer(function MySchedule({
     };
     if (!isLoggedIn) {
         return (
-            <div className="card p-6 h-[750px] flex flex-col relative overflow-hidden">
+            <div className="card p-6 h-auto lg:h-[750px] flex flex-col relative overflow-hidden">
                 {/* 背景图片 */}
                 <div 
                     className="absolute inset-0 bg-cover bg-center opacity-20 blur-sm"
@@ -252,7 +252,7 @@ const MySchedule = observer(function MySchedule({
     }
 
     return (
-        <div className="card p-6 h-[750px] flex flex-col">
+        <div className="card p-6 h-auto lg:h-[750px] flex flex-col">
             <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-2">
                     <Calendar className="module-icon" size={24} />
@@ -285,9 +285,9 @@ const MySchedule = observer(function MySchedule({
                 )}
 
                 {/* 左侧：日程事项 */}
-                <div className="flex flex-col h-full overflow-y-auto">
+                <div className="flex flex-col h-full lg:h-auto overflow-y-auto">
                     <>
-                            <div className="space-y-3 mb-6 flex-1 overflow-y-auto scrollbar-hide">
+                            <div className="space-y-3 mb-6 flex-1 overflow-y-auto scrollbar-hide max-h-[500px] lg:max-h-none">
                                 {schedules.slice(0, 15).map((schedule) => {
                                     return (
                                         <div
@@ -363,8 +363,8 @@ const MySchedule = observer(function MySchedule({
                     </>
                 </div>
 
-                {/* 右侧：趋势图 */}
-                <div className="flex flex-col h-full">
+                {/* 右侧：趋势图 - 在移动端隐藏 */}
+                <div className="hidden lg:flex flex-col h-full">
                     <div className="space-y-6 flex-1 overflow-y-auto scrollbar-hide">
                         {/* 日程完成趋势 */}
                         <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-md border border-accent/10">
